@@ -7,51 +7,49 @@ import { createPresetsPanel } from './ui/components/presets-panel';
 import { createSettingsPanel } from './ui/components/settings-panel';
 import { createToolbar } from './ui/components/toolbar';
 
-// Init theme
+// Init theme + toggle (sync, no store dependency)
 initTheme();
+document.getElementById('btn-theme')?.addEventListener('click', toggleTheme);
 
-// Init store
+// Tab navigation (sync, no store dependency)
+const tabs = document.querySelectorAll<HTMLButtonElement>('.tabs__btn');
+const panels = document.querySelectorAll<HTMLElement>('.panel');
+
+function activateTab(tab: HTMLButtonElement): void {
+  const target = tab.dataset.tab;
+  for (const t of tabs) {
+    const isActive = t === tab;
+    t.classList.toggle('tabs__btn--active', isActive);
+    t.setAttribute('aria-selected', String(isActive));
+    t.tabIndex = isActive ? 0 : -1;
+  }
+  for (const p of panels) p.classList.toggle('panel--active', p.id === `panel-${target}`);
+}
+
+for (const tab of tabs) {
+  tab.addEventListener('click', () => activateTab(tab));
+  tab.addEventListener('keydown', (e) => {
+    const tabArr = [...tabs];
+    const idx = tabArr.indexOf(tab);
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const next = tabArr[(idx + 1) % tabArr.length];
+      next.focus();
+      activateTab(next);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prev = tabArr[(idx - 1 + tabArr.length) % tabArr.length];
+      prev.focus();
+      activateTab(prev);
+    }
+  });
+}
+
+// Init store (async — everything below depends on store data)
 const store = new Store();
 
 async function init(): Promise<void> {
   await store.init();
-
-  // Tab navigation
-  const tabs = document.querySelectorAll<HTMLButtonElement>('.tabs__btn');
-  const panels = document.querySelectorAll<HTMLElement>('.panel');
-
-  function activateTab(tab: HTMLButtonElement): void {
-    const target = tab.dataset.tab;
-    for (const t of tabs) {
-      const isActive = t === tab;
-      t.classList.toggle('tabs__btn--active', isActive);
-      t.setAttribute('aria-selected', String(isActive));
-      t.tabIndex = isActive ? 0 : -1;
-    }
-    for (const p of panels) p.classList.toggle('panel--active', p.id === `panel-${target}`);
-  }
-
-  for (const tab of tabs) {
-    tab.addEventListener('click', () => activateTab(tab));
-    tab.addEventListener('keydown', (e) => {
-      const tabArr = [...tabs];
-      const idx = tabArr.indexOf(tab);
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        const next = tabArr[(idx + 1) % tabArr.length];
-        next.focus();
-        activateTab(next);
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        const prev = tabArr[(idx - 1 + tabArr.length) % tabArr.length];
-        prev.focus();
-        activateTab(prev);
-      }
-    });
-  }
-
-  // Theme toggle
-  document.getElementById('btn-theme')?.addEventListener('click', toggleTheme);
 
   // Toolbar
   const toolbarEl = document.getElementById('toolbar')!;
