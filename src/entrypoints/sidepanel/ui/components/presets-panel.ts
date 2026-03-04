@@ -3,40 +3,74 @@ import type { Preset } from '@shared/types';
 import { showToast } from './toast';
 
 export function createPresetsPanel(container: HTMLElement, store: Store): { destroy(): void } {
+  let draftName = '';
+  let renamePresetId: string | null = null;
+  let renameValue = '';
+
+  function savePreset(name: string): void {
+    const preset: Preset = {
+      id: crypto.randomUUID(),
+      name,
+      mode: store.current.mode,
+      include: [...store.current.include],
+      exclude: [...store.current.exclude],
+      pinned: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    store.setPresets([...store.current.presets, preset]);
+    showToast(`Preset "${name}" saved`);
+  }
+
   function render(): void {
     container.innerHTML = '';
 
-    // Title + save button row
     const header = document.createElement('div');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)';
+    header.className = 'presets-panel__header';
 
     const title = document.createElement('h3');
     title.className = 'import-panel__section-title';
     title.textContent = 'Saved presets';
 
     const headerActions = document.createElement('div');
-    headerActions.style.cssText = 'display:flex;gap:var(--space-2)';
+    headerActions.className = 'presets-panel__actions';
+
+    const saveWrap = document.createElement('div');
+    saveWrap.className = 'presets-panel__save';
+
+    const saveInput = document.createElement('input');
+    saveInput.className = 'presets-panel__input';
+    saveInput.placeholder = 'Preset name';
+    saveInput.value = draftName;
+    saveInput.addEventListener('input', () => {
+      draftName = saveInput.value;
+    });
+    saveInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const trimmed = draftName.trim();
+        if (!trimmed) return;
+        savePreset(trimmed);
+        draftName = '';
+        render();
+      }
+    });
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'btn btn--primary btn--sm';
     saveBtn.textContent = 'Save current';
     saveBtn.addEventListener('click', () => {
-      const name = prompt('Preset name:');
-      if (!name) return;
-      const preset: Preset = {
-        id: crypto.randomUUID(),
-        name,
-        mode: store.current.mode,
-        include: [...store.current.include],
-        exclude: [...store.current.exclude],
-        pinned: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-      store.setPresets([...store.current.presets, preset]);
-      showToast(`Preset "${name}" saved`);
+      const trimmed = draftName.trim();
+      if (!trimmed) {
+        showToast('Enter a preset name');
+        return;
+      }
+      savePreset(trimmed);
+      draftName = '';
       render();
     });
+
+    saveWrap.append(saveInput, saveBtn);
 
     const importBtn = document.createElement('button');
     importBtn.className = 'btn btn--sm';
@@ -77,11 +111,10 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
       URL.revokeObjectURL(url);
     });
 
-    headerActions.append(importBtn, exportBtn, saveBtn);
+    headerActions.append(importBtn, exportBtn);
     header.append(title, headerActions);
-    container.appendChild(header);
+    container.append(header, saveWrap);
 
-    // Presets list
     const presets = store.current.presets;
     if (presets.length === 0) {
       const empty = document.createElement('div');
@@ -91,7 +124,6 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
       return;
     }
 
-    // Sort: pinned first, then by updatedAt desc
     const sorted = [...presets].sort((a, b) => {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
       return b.updatedAt - a.updatedAt;
@@ -100,14 +132,6 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
     for (const preset of sorted) {
       const item = document.createElement('div');
       item.className = 'preset-item';
-
-      const name = document.createElement('span');
-      name.className = 'preset-item__name';
-      name.textContent = preset.name;
-
-      const meta = document.createElement('span');
-      meta.className = 'preset-item__meta';
-      meta.textContent = `${preset.mode} · ${preset.include.length + preset.exclude.length} countries`;
 
       const pin = document.createElement('button');
       pin.className = `btn-icon preset-item__pin ${preset.pinned ? 'preset-item__pin--active' : ''}`;
@@ -120,9 +144,52 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
         render();
       });
 
+      const content = document.createElement('div');
+      content.className = 'preset-item__content';
+
+      if (renamePresetId === preset.id) {
+        const renameInput = document.createElement('input');
+        renameInput.className = 'presets-panel__input presets-panel__input--inline';
+        renameInput.value = renameValue;
+        renameInput.addEventListener('input', () => {
+          renameValue = renameInput.value;
+        });
+        renameInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const trimmed = renameValue.trim();
+            if (!trimmed) return;
+            const updated = presets.map((p) =>
+              p.id === preset.id ? { ...p, name: trimmed, updatedAt: Date.now() } : p,
+            );
+            store.setPresets(updated);
+            renamePresetId = null;
+            renameValue = '';
+            showToast(`Renamed to "${trimmed}"`);
+            render();
+          }
+          if (e.key === 'Escape') {
+            renamePresetId = null;
+            renameValue = '';
+            render();
+          }
+        });
+        content.appendChild(renameInput);
+      } else {
+        const name = document.createElement('span');
+        name.className = 'preset-item__name';
+        name.textContent = preset.name;
+
+        const meta = document.createElement('span');
+        meta.className = 'preset-item__meta';
+        meta.textContent = `${preset.mode} · ${preset.include.length + preset.exclude.length} countries`;
+
+        content.append(name, meta);
+      }
+
       const loadBtn = document.createElement('button');
       loadBtn.className = 'btn btn--sm';
-      loadBtn.textContent = 'Load';
+      loadBtn.textContent = 'Load (replace)';
       loadBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         store.setMode(preset.mode);
@@ -133,13 +200,16 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
 
       const renameBtn = document.createElement('button');
       renameBtn.className = 'btn btn--sm';
-      renameBtn.textContent = 'Rename';
+      renameBtn.textContent = renamePresetId === preset.id ? 'Cancel' : 'Rename';
       renameBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const newName = prompt('New name:', preset.name);
-        if (!newName) return;
-        const updated = presets.map((p) => (p.id === preset.id ? { ...p, name: newName, updatedAt: Date.now() } : p));
-        store.setPresets(updated);
+        if (renamePresetId === preset.id) {
+          renamePresetId = null;
+          renameValue = '';
+        } else {
+          renamePresetId = preset.id;
+          renameValue = preset.name;
+        }
         render();
       });
 
@@ -154,7 +224,7 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
         render();
       });
 
-      item.append(pin, name, meta, loadBtn, renameBtn, deleteBtn);
+      item.append(pin, content, loadBtn, renameBtn, deleteBtn);
       container.appendChild(item);
     }
   }

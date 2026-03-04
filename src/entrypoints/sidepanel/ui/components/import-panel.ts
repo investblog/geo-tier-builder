@@ -26,6 +26,10 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
   results.className = 'import-panel__results';
   results.style.display = 'none';
 
+  const summary = document.createElement('div');
+  summary.className = 'import-panel__summary';
+  summary.style.display = 'none';
+
   // Apply button
   const applyBtn = document.createElement('button');
   applyBtn.className = 'btn btn--primary';
@@ -33,6 +37,7 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
   applyBtn.style.display = 'none';
 
   let lastMatched: string[] = [];
+  let lastUnknown: string[] = [];
 
   parseBtn.addEventListener('click', () => {
     const input = textarea.value.trim();
@@ -40,8 +45,11 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
 
     const parsed = parseCountryInput(input);
     lastMatched = parsed.matched;
+    lastUnknown = parsed.unknown;
     results.innerHTML = '';
     results.style.display = 'flex';
+    summary.style.display = '';
+    summary.textContent = `Matched ${parsed.matched.length}, Unknown ${parsed.unknown.length}`;
 
     // Matched section
     if (parsed.matched.length > 0) {
@@ -56,7 +64,10 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
         const country = BY_ISO2.get(iso2);
         const chip = document.createElement('span');
         chip.className = 'chip chip--active';
-        chip.innerHTML = `<svg class="country-row__flag" style="width:16px;height:12px"><use href="#flag-${iso2.toLowerCase()}"></use></svg> ${iso2}`;
+        const flag = createFlagIcon(iso2);
+        flag.style.width = '16px';
+        flag.style.height = '12px';
+        chip.append(flag, document.createTextNode(` ${iso2}`));
         if (country) chip.title = country.name_en;
         matchChips.appendChild(chip);
       }
@@ -72,7 +83,23 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
       const unknownTitle = document.createElement('div');
       unknownTitle.className = 'import-panel__section-title';
       unknownTitle.textContent = `Unknown (${parsed.unknown.length})`;
-      results.appendChild(unknownTitle);
+
+      const copyUnknownBtn = document.createElement('button');
+      copyUnknownBtn.className = 'btn btn--sm';
+      copyUnknownBtn.textContent = 'Copy unknown';
+      copyUnknownBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(lastUnknown.join('\n'));
+          showToast('Unknown tokens copied');
+        } catch {
+          showToast('Failed to copy unknown tokens');
+        }
+      });
+
+      const unknownHeader = document.createElement('div');
+      unknownHeader.className = 'import-panel__header';
+      unknownHeader.append(unknownTitle, copyUnknownBtn);
+      results.appendChild(unknownHeader);
 
       const unknownList = document.createElement('div');
       unknownList.className = 'import-panel__unknown';
@@ -99,13 +126,27 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
     showToast(`Added ${lastMatched.length} countries`);
   });
 
-  container.append(title, textarea, parseBtn, results, applyBtn);
+  container.append(title, textarea, parseBtn, summary, results, applyBtn);
 
   return {
     destroy() {
       container.innerHTML = '';
     },
   };
+}
+
+function createFlagIcon(iso2: string): SVGSVGElement {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'country-row__flag');
+  svg.setAttribute('aria-hidden', 'true');
+
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  const ref = `#flag-${iso2.toLowerCase()}`;
+  use.setAttribute('href', ref);
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', ref);
+  svg.appendChild(use);
+
+  return svg;
 }
 
 function escapeHtml(str: string): string {
