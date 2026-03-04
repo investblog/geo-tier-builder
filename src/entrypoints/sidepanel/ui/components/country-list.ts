@@ -84,6 +84,20 @@ function groupByRegion(countries: Country[]): RegionGroup[] {
   return REGIONS.filter((r) => map.has(r)).map((r) => ({ region: r, countries: map.get(r)! }));
 }
 
+function createFlagIcon(iso2: string): SVGSVGElement {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'country-row__flag');
+  svg.setAttribute('aria-hidden', 'true');
+
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  const ref = `#flag-${iso2.toLowerCase()}`;
+  use.setAttribute('href', ref);
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', ref);
+  svg.appendChild(use);
+
+  return svg;
+}
+
 export function createCountryList(
   container: HTMLElement,
   store: Store,
@@ -166,12 +180,12 @@ export function createCountryList(
 
           row.innerHTML = `
             <input type="checkbox" class="country-row__checkbox" ${isSelected ? 'checked' : ''} aria-label="${country.name_en}" tabindex="-1">
-            <svg class="country-row__flag" aria-hidden="true"><use href="#flag-${country.iso2.toLowerCase()}"></use></svg>
             <span class="country-row__iso">${country.iso2}</span>
             <span class="country-row__name">${country.name_en}</span>
             <span class="country-row__tier country-row__tier--${tier}">${tier}</span>
             <span class="country-row__star ${isFav ? 'country-row__star--active' : ''}" role="button" aria-label="Toggle favorite" tabindex="-1">★</span>
           `;
+          row.insertBefore(createFlagIcon(country.iso2), row.children[1] ?? null);
 
           // Click row to toggle selection
           row.addEventListener('click', (e) => {
