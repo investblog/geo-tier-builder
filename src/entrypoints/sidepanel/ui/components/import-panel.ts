@@ -2,37 +2,38 @@ import { BY_ISO2 } from '@engine/countries';
 import { parseCountryInput } from '@engine/parser';
 import { add } from '@engine/selection';
 import type { Store } from '@engine/store';
+import { createFlagIcon } from '@shared/dom';
 import { showToast } from './toast';
 
 export function createImportPanel(container: HTMLElement, store: Store): { destroy(): void } {
-  // Title
   const title = document.createElement('h3');
   title.className = 'import-panel__section-title';
   title.textContent = 'Import countries';
 
-  // Textarea
   const textarea = document.createElement('textarea');
   textarea.className = 'import-panel__textarea';
   textarea.placeholder = 'Paste country codes, names, or mixed list…';
   textarea.rows = 6;
 
-  // Parse button
   const parseBtn = document.createElement('button');
   parseBtn.className = 'btn btn--primary';
   parseBtn.textContent = 'Parse';
 
-  // Results area
+  const summary = document.createElement('div');
+  summary.className = 'import-panel__summary';
+  summary.style.display = 'none';
+
   const results = document.createElement('div');
   results.className = 'import-panel__results';
   results.style.display = 'none';
 
-  // Apply button
   const applyBtn = document.createElement('button');
   applyBtn.className = 'btn btn--primary';
   applyBtn.textContent = 'Apply to selection';
   applyBtn.style.display = 'none';
 
   let lastMatched: string[] = [];
+  let lastUnknown: string[] = [];
 
   parseBtn.addEventListener('click', () => {
     const input = textarea.value.trim();
@@ -40,8 +41,13 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
 
     const parsed = parseCountryInput(input);
     lastMatched = parsed.matched;
+    lastUnknown = parsed.unknown;
     results.innerHTML = '';
     results.style.display = 'flex';
+
+    // Summary line
+    summary.style.display = '';
+    summary.textContent = `Matched ${parsed.matched.length}, Unknown ${parsed.unknown.length}`;
 
     // Matched section
     if (parsed.matched.length > 0) {
@@ -56,12 +62,14 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
         const country = BY_ISO2.get(iso2);
         const chip = document.createElement('span');
         chip.className = 'chip chip--active';
-        chip.innerHTML = `<svg class="country-row__flag" style="width:16px;height:12px"><use href="#flag-${iso2.toLowerCase()}"></use></svg> ${iso2}`;
+        const flag = createFlagIcon(iso2);
+        flag.style.width = '16px';
+        flag.style.height = '12px';
+        chip.append(flag, document.createTextNode(` ${iso2}`));
         if (country) chip.title = country.name_en;
         matchChips.appendChild(chip);
       }
       results.appendChild(matchChips);
-
       applyBtn.style.display = '';
     } else {
       applyBtn.style.display = 'none';
@@ -69,10 +77,27 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
 
     // Unknown section
     if (parsed.unknown.length > 0) {
+      const unknownHeader = document.createElement('div');
+      unknownHeader.className = 'import-panel__header';
+
       const unknownTitle = document.createElement('div');
       unknownTitle.className = 'import-panel__section-title';
       unknownTitle.textContent = `Unknown (${parsed.unknown.length})`;
-      results.appendChild(unknownTitle);
+
+      const copyUnknownBtn = document.createElement('button');
+      copyUnknownBtn.className = 'btn btn--sm';
+      copyUnknownBtn.textContent = 'Copy unknown';
+      copyUnknownBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(lastUnknown.join('\n'));
+          showToast('Unknown tokens copied');
+        } catch {
+          showToast('Failed to copy');
+        }
+      });
+
+      unknownHeader.append(unknownTitle, copyUnknownBtn);
+      results.appendChild(unknownHeader);
 
       const unknownList = document.createElement('div');
       unknownList.className = 'import-panel__unknown';
@@ -99,7 +124,7 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
     showToast(`Added ${lastMatched.length} countries`);
   });
 
-  container.append(title, textarea, parseBtn, results, applyBtn);
+  container.append(title, textarea, parseBtn, summary, results, applyBtn);
 
   return {
     destroy() {

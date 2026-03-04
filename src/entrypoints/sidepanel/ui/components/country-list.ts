@@ -3,6 +3,7 @@ import { REGIONS } from '@engine/regions';
 import { toggle, toggleFavorite } from '@engine/selection';
 import type { Store } from '@engine/store';
 import { getResolvedTier } from '@engine/tiers';
+import { createFlagIcon } from '@shared/dom';
 import type { Country, Region } from '@shared/types';
 import type { ToolbarState } from './toolbar';
 
@@ -166,12 +167,12 @@ export function createCountryList(
 
           row.innerHTML = `
             <input type="checkbox" class="country-row__checkbox" ${isSelected ? 'checked' : ''} aria-label="${country.name_en}" tabindex="-1">
-            <svg class="country-row__flag" aria-hidden="true"><use href="#flag-${country.iso2.toLowerCase()}"></use></svg>
             <span class="country-row__iso">${country.iso2}</span>
             <span class="country-row__name">${country.name_en}</span>
             <span class="country-row__tier country-row__tier--${tier}">${tier}</span>
             <span class="country-row__star ${isFav ? 'country-row__star--active' : ''}" role="button" aria-label="Toggle favorite" tabindex="-1">★</span>
           `;
+          row.insertBefore(createFlagIcon(country.iso2), row.children[1]);
 
           // Click row to toggle selection
           row.addEventListener('click', (e) => {
