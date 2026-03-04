@@ -132,14 +132,33 @@ export function createCountryList(
       header.className = 'region-header';
       if (collapsedRegions.has(group.region)) header.classList.add('region-header--collapsed');
 
+      const regionCodes = group.countries.map((c) => c.iso2);
       const selectedInRegion = group.countries.filter((c) => activeSet.has(c.iso2)).length;
+      const allSelected = selectedInRegion === group.countries.length;
+      const someSelected = selectedInRegion > 0 && !allSelected;
 
       header.innerHTML = `
+        <input type="checkbox" class="region-header__checkbox" ${allSelected ? 'checked' : ''} aria-label="Select all ${REGION_LABELS[group.region]}" tabindex="-1">
         <span class="region-header__name">${REGION_LABELS[group.region]}</span>
         <span class="region-header__count">${group.countries.length}</span>
         ${selectedInRegion > 0 ? `<span class="region-header__selected">${selectedInRegion} sel</span>` : ''}
         <svg class="region-header__chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5l3 3 3-3"/></svg>
       `;
+
+      const checkbox = header.querySelector<HTMLInputElement>('.region-header__checkbox')!;
+      if (someSelected) checkbox.indeterminate = true;
+
+      checkbox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = new Set(getActiveList());
+        if (allSelected) {
+          for (const code of regionCodes) current.delete(code);
+        } else {
+          for (const code of regionCodes) current.add(code);
+        }
+        store.setActiveList([...current]);
+        render();
+      });
 
       header.addEventListener('click', () => {
         if (collapsedRegions.has(group.region)) {
@@ -170,7 +189,7 @@ export function createCountryList(
             <span class="country-row__iso">${country.iso2}</span>
             <span class="country-row__name">${country.name_en}</span>
             <span class="country-row__tier country-row__tier--${tier}">${tier}</span>
-            <span class="country-row__star ${isFav ? 'country-row__star--active' : ''}" role="button" aria-label="Toggle favorite" tabindex="-1">★</span>
+            <svg class="country-row__star ${isFav ? 'country-row__star--active' : ''}" viewBox="0 0 24 24" role="button" aria-label="Toggle favorite" tabindex="-1"><path fill="currentColor" d="${isFav ? 'M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z' : 'M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z'}"/></svg>
           `;
           row.insertBefore(createFlagIcon(country.iso2), row.children[1]);
 

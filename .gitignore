@@ -31,6 +31,7 @@ npm-debug.log*
 
 # Temp
 temp/
+tmp/
 
 # Claude Code local settings & instructions
 .claude/

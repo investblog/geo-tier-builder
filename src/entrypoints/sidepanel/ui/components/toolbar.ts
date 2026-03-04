@@ -81,18 +81,39 @@ export function createToolbar(
   searchInput.className = 'search__input';
   searchInput.placeholder = 'Search countries…';
 
-  const searchKbd = document.createElement('kbd');
-  searchKbd.className = 'search__kbd';
-  searchKbd.textContent = 'Ctrl+K';
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'search__clear';
+  clearBtn.setAttribute('aria-label', 'Clear');
+  const clearSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  clearSvg.setAttribute('viewBox', '0 0 24 24');
+  clearSvg.setAttribute('fill', 'none');
+  clearSvg.setAttribute('stroke', 'currentColor');
+  clearSvg.setAttribute('stroke-width', '2');
+  clearSvg.setAttribute('stroke-linecap', 'round');
+  clearSvg.setAttribute('stroke-linejoin', 'round');
+  const clearPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  clearPath.setAttribute('d', 'M18 6L6 18M6 6l12 12');
+  clearSvg.appendChild(clearPath);
+  clearBtn.appendChild(clearSvg);
 
-  searchWrap.append(searchIcon, searchInput, searchKbd);
+  searchWrap.append(searchIcon, searchInput, clearBtn);
 
   searchInput.addEventListener('input', () => {
     if (searchTimer) clearTimeout(searchTimer);
+    searchWrap.classList.toggle('has-value', searchInput.value.length > 0);
     searchTimer = setTimeout(() => {
       state.search = searchInput.value.trim();
       emit();
     }, 150);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    searchWrap.classList.remove('has-value');
+    state.search = '';
+    searchInput.focus();
+    emit();
   });
 
   // Mode toggle
@@ -229,6 +250,7 @@ export function createToolbar(
     }
     if (e.key === 'Escape' && document.activeElement === searchInput) {
       searchInput.value = '';
+      searchWrap.classList.remove('has-value');
       state.search = '';
       searchInput.blur();
       emit();

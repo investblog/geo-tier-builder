@@ -1,6 +1,5 @@
 import { Store } from '@engine/store';
 import { initTheme, toggleTheme } from '@shared/theme';
-import { browser } from 'wxt/browser';
 import { createCountryList } from './ui/components/country-list';
 import { createImportPanel } from './ui/components/import-panel';
 import { createOutputPanel } from './ui/components/output-panel';
@@ -14,24 +13,8 @@ initTheme();
 // Init store
 const store = new Store();
 
-async function loadFlagsSprite(): Promise<void> {
-  const url = browser.runtime.getURL('/flags-sprite.svg');
-  const resp = await fetch(url);
-  const text = await resp.text();
-  const container = document.getElementById('flags-sprite');
-  if (container) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'image/svg+xml');
-    const svg = doc.documentElement;
-    // Move all symbols into our container
-    while (svg.firstChild) {
-      container.appendChild(document.importNode(svg.firstChild, true));
-    }
-  }
-}
-
 async function init(): Promise<void> {
-  await Promise.all([store.init(), loadFlagsSprite()]);
+  await store.init();
 
   // Tab navigation
   const tabs = document.querySelectorAll<HTMLButtonElement>('.tabs__btn');

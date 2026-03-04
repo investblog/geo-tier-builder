@@ -3,30 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="manifest.default_icon" content='{ "16": "icons/16.png", "32": "icons/32.png" }'>
+  <title>Geo/Tier Builder</title>
   <link rel="stylesheet" href="./styles/sidepanel.css">
 </head>
 <body>
   <!-- SVG flags sprite injected here -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" id="flags-sprite"></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" id="flags-sprite"><!-- flags injected at runtime --></svg>
 
   <div class="app">
     <header class="header">
       <span class="header__title" data-i18n="extShortName">Geo/Tier Builder</span>
       <div class="header__actions">
         <button class="btn-icon" id="btn-theme" title="Toggle theme">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="3.5"/>
-            <path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7.5 2c-1.79 1.15-3 3.18-3 5.5s1.21 4.35 3.03 5.5C4.46 13 2 10.54 2 7.5A5.5 5.5 0 0 1 7.5 2m11.57 1.5 1.43 1.43L4.93 20.5 3.5 19.07zm-6.18 2.43L11.41 5 9.97 6l.42-1.7L9 3.24l1.75-.12.58-1.65L12 3.1l1.73.03-1.35 1.13zm-3.3 3.61-1.16-.73-1.12.78.34-1.32-1.09-.83 1.36-.09.45-1.29.51 1.27 1.36.03-1.05.87zM19 13.5a5.5 5.5 0 0 1-5.5 5.5c-1.22 0-2.35-.4-3.26-1.07l7.69-7.69c.67.91 1.07 2.04 1.07 3.26m-4.4 6.58 2.77-1.15-.24 3.35zm4.33-2.7 1.15-2.77 2.2 2.54zm1.15-4.96-1.14-2.78 3.34.24zM9.63 18.93l2.77 1.15-2.53 2.19z"/></svg>
         </button>
       </div>
     </header>
 
     <nav class="tabs" id="tabs" role="tablist" aria-label="Main sections">
-      <button class="tabs__btn tabs__btn--active" data-tab="list" role="tab" aria-selected="true" aria-controls="panel-list">List</button>
-      <button class="tabs__btn" data-tab="import" role="tab" aria-selected="false" aria-controls="panel-import">Import</button>
-      <button class="tabs__btn" data-tab="presets" role="tab" aria-selected="false" aria-controls="panel-presets">Presets</button>
-      <button class="tabs__btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="panel-settings">Settings</button>
+      <button class="tabs__btn tabs__btn--active" data-tab="list" role="tab" aria-selected="true" aria-controls="panel-list"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="m10 14.465 7.36-5.73L19 7.465l-9-7-9 7 1.63 1.27m7.37 8.27-7.38-5.73L1 12.535l9 7 9-7-1.63-1.27z"/></svg>List</button>
+      <button class="tabs__btn" data-tab="import" role="tab" aria-selected="false" aria-controls="panel-import"><svg class="tabs__icon" viewBox="0 0 23 20"><path fill="currentColor" d="M3 0v6H1V0zM1 20h2v-6H1zm3-10a2 2 0 1 0-2 2c1.11 0 2-.89 2-2m19-6v12c0 1.11-.89 2-2 2H9a2 2 0 0 1-2-2v-4l-2-2 2-2V4a2 2 0 0 1 2-2h12c1.11 0 2 .89 2 2m-5 7h-8v2h8zm2-4H10v2h10z"/></svg>Import</button>
+      <button class="tabs__btn" data-tab="presets" role="tab" aria-selected="false" aria-controls="panel-presets"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="M.485 9.01a.94.94 0 0 1-.352-1.305L1.561 5.24a.9.9 0 0 1 .448-.4L9.464.65a.9.9 0 0 1 .543-.171c.2 0 .39.057.542.171l7.522 4.228a.93.93 0 0 1 .42.438l1.38 2.399a.946.946 0 0 1-.343 1.295l-.952.552v4.723c0 .361-.2.676-.505.838L10.55 19.35a.9.9 0 0 1-.542.171c-.2 0-.39-.057-.543-.17l-7.522-4.228a.94.94 0 0 1-.505-.838V9.01a.97.97 0 0 1-.952 0m9.522-6.484v6.38l5.675-3.19zM3.342 13.723l5.713 3.218v-6.389L3.342 7.344zm13.33 0v-3.066l-4.761 2.761a1 1 0 0 1-.952.01v3.513zm-4.904-2.428 5.98-3.456-.553-.962-5.98 3.456z"/></svg>Presets</button>
+      <button class="tabs__btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="panel-settings"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="M9.73 13.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46a.49.49 0 0 0-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98L12.23.42a.506.506 0 0 0-.5-.42h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L2.3 9c-.04.34-.07.67-.07 1s.03.65.07.97L.19 12.63c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>Settings</button>
     </nav>
 
     <div class="panels">
