@@ -1,0 +1,97 @@
+{
+  "extName": {
+    "message": "Geo/Tier Builder"
+  },
+  "extShortName": {
+    "message": "Geo/Tier Builder"
+  },
+  "extDescription": {
+    "message": "Создавайте GEO-списки для 301.st TDS и других платформ."
+  },
+
+  "tabList": { "message": "Список" },
+  "tabImport": { "message": "Импорт" },
+  "tabPresets": { "message": "Пресеты" },
+  "tabSettings": { "message": "Настройки" },
+
+  "modeAllow": { "message": "Разрешить" },
+  "modeBlock": { "message": "Блокировать" },
+
+  "searchPlaceholder": { "message": "Поиск стран…" },
+  "searchKbd": { "message": "Ctrl+K" },
+
+  "regionEUR": { "message": "Европа" },
+  "regionCIS": { "message": "СНГ" },
+  "regionNA": { "message": "Северная Америка" },
+  "regionLATAM": { "message": "Латинская Америка" },
+  "regionAPAC": { "message": "Азия и Тихий океан" },
+  "regionMENA": { "message": "Ближний Восток и С. Африка" },
+  "regionAFR": { "message": "Африка" },
+  "regionOCE": { "message": "Океания" },
+
+  "tagEU": { "message": "ЕС" },
+  "tagEEA": { "message": "ЕЭП" },
+  "tagG7": { "message": "G7" },
+  "tagG20": { "message": "G20" },
+  "tagBRICS": { "message": "БРИКС" },
+  "tagFIVE_EYES": { "message": "Пять Глаз" },
+
+  "tierT1": { "message": "T1" },
+  "tierT2": { "message": "T2" },
+  "tierT3": { "message": "T3" },
+
+  "filterFavorites": { "message": "Избранные" },
+
+  "bulkClear": { "message": "Очистить" },
+  "bulkInvert": { "message": "Инвертировать" },
+  "bulkSelectFiltered": { "message": "Выбрать отфильтрованные" },
+
+  "selectedOne": { "message": "1 выбрана" },
+  "selectedOther": {
+    "message": "$COUNT$ выбрано",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+
+  "outputCopy": { "message": "Копировать" },
+  "outputCopied": { "message": "Скопировано!" },
+  "outputDownload": { "message": "Скачать" },
+  "outputSponsor": { "message": "Создано для" },
+  "outputEmpty": { "message": "Выберите страны для генерации" },
+
+  "categoryGeneric": { "message": "Общие" },
+  "category301st": { "message": "301.st TDS" },
+  "categoryCloudflare": { "message": "Cloudflare" },
+  "categoryServer": { "message": "Сервер / JS" },
+
+  "importTitle": { "message": "Импорт стран" },
+  "importPlaceholder": { "message": "Вставьте коды стран, названия или смешанный список…" },
+  "importParse": { "message": "Разобрать" },
+  "importApply": { "message": "Применить к выбору" },
+  "importMatched": { "message": "Найденные" },
+  "importUnknown": { "message": "Неизвестные" },
+  "importDidYouMean": { "message": "Возможно:" },
+
+  "presetsTitle": { "message": "Сохранённые пресеты" },
+  "presetsSave": { "message": "Сохранить текущий" },
+  "presetsEmpty": { "message": "Пресеты ещё не сохранены" },
+  "presetsLoad": { "message": "Загрузить" },
+  "presetsRename": { "message": "Переименовать" },
+  "presetsDelete": { "message": "Удалить" },
+  "presetsExport": { "message": "Экспорт" },
+  "presetsImport": { "message": "Импорт" },
+
+  "settingsTheme": { "message": "Тема" },
+  "settingsThemeDark": { "message": "Тёмная" },
+  "settingsThemeLight": { "message": "Светлая" },
+  "settingsThemeAuto": { "message": "Системная" },
+  "settingsLanguage": { "message": "Язык" },
+  "settingsDefaultMode": { "message": "Режим по умолчанию" },
+  "settingsDefaultTemplate": { "message": "Шаблон по умолчанию" },
+  "settingsCustomTiers": { "message": "Пользовательские уровни" },
+  "settingsCustomTiersDesc": { "message": "Переопределите уровни для отдельных стран" },
+  "settingsResetTiers": { "message": "Сбросить по умолчанию" },
+
+  "toggleTheme": { "message": "Переключить тему" },
+
+  "emptyState": { "message": "Нет стран, соответствующих фильтрам" }
+}

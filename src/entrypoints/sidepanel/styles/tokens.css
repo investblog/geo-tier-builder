@@ -1,0 +1,164 @@
+/* ── Color palette ── */
+:root {
+  --blue-900: #003682;
+  --blue-700: #0055DC;
+  --blue-500: #3475C0;
+  --blue-300: #408BC9;
+  --blue-neon: #4DA3FF;
+
+  --gray-950: #000000;
+  --gray-900: #111111;
+  --gray-850: #181A1F;
+  --gray-800: #1F2229;
+  --gray-700: #2A2D35;
+  --gray-600: #3A3D46;
+  --gray-500: #555963;
+  --gray-400: #72767F;
+  --gray-300: #A0A4AF;
+  --gray-200: #C4C7CF;
+  --gray-100: #E7E9EE;
+  --gray-50: #F8FBFB;
+
+  --danger: #FF4F6E;
+  --success: #18C27A;
+  --warning: #FFB347;
+  --info: #3B82F6;
+
+  /* ── Typography ── */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-body: 0.875rem;
+  --fs-control: 0.8125rem;
+  --fs-lg: 1rem;
+  --fs-xl: 1.25rem;
+
+  --lh-body: 1.5;
+  --lh-control: 1.25;
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ── Control sizing ── */
+  --control-pad-y: 0.3em;
+  --control-pad-x: 0.75em;
+  --border-1: 1px;
+
+  /* ── Radii ── */
+  --r-pill: 999px;
+  --r-field: 0.5rem;
+  --r-sm: 0.25rem;
+  --r-md: 0.5rem;
+  --r-lg: 0.75rem;
+
+  /* ── Spacing ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --inline-gap: 0.5rem;
+  --stack-gap: 0.5rem;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+  /* ── Transitions ── */
+  --transition-fast: 120ms ease-out;
+  --transition-md: 160ms ease-out;
+
+  /* ── Z-index ── */
+  --z-sticky: 30;
+  --z-dropdown: 20;
+  --z-toast: 2100;
+  --z-tooltip: 2200;
+}
+
+/* ── Dark theme (default) ── */
+:root,
+:root[data-theme='dark'] {
+  --bg: #111111;
+  --bg-elevated: #181A1F;
+  --bg-soft: #1F2229;
+  --bg-hover: rgba(255, 255, 255, 0.04);
+
+  --text-main: #E7E9EE;
+  --text-muted: #A0A4AF;
+  --text-subtle: #8B8F98;
+
+  --primary: #3475C0;
+  --primary-hover: #4DA3FF;
+  --primary-soft: rgba(77, 163, 255, 0.1);
+  --primary-text: #4DA3FF;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --input-bg: rgba(15, 16, 22, 0.9);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-border-focus: rgba(77, 163, 255, 0.8);
+
+  --danger-bg: #3D0915;
+  --success-bg: #042C1C;
+  --warning-bg: #38240A;
+
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --chip-bg-active: var(--primary-soft);
+  --chip-text: var(--text-muted);
+  --chip-text-active: var(--primary-text);
+  --chip-border-active: var(--primary);
+
+  color-scheme: dark;
+}
+
+/* ── Light theme ── */
+:root[data-theme='light'] {
+  --bg: #FFFFFF;
+  --bg-elevated: #F7F7F8;
+  --bg-soft: #F4F8FC;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+
+  --text-main: #111111;
+  --text-muted: #666A73;
+  --text-subtle: #6E7580;
+
+  --primary: #0055DC;
+  --primary-hover: #003682;
+  --primary-soft: rgba(0, 85, 220, 0.08);
+  --primary-text: #0055DC;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.14);
+
+  --input-bg: #FFFFFF;
+  --input-border: rgba(0, 0, 0, 0.15);
+  --input-border-focus: rgba(0, 85, 220, 0.8);
+
+  --danger: #D9264A;
+  --success: #0E7B4C;
+  --warning: #9A6200;
+  --info: #2563EB;
+
+  --danger-bg: #FDE6EA;
+  --success-bg: #E0F7EE;
+  --warning-bg: #FFF1D8;
+
+  --chip-bg: rgba(0, 0, 0, 0.05);
+  --chip-bg-active: var(--primary-soft);
+  --chip-text: var(--text-muted);
+  --chip-text-active: var(--primary-text);
+  --chip-border-active: var(--primary);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.12);
+
+  color-scheme: light;
+}

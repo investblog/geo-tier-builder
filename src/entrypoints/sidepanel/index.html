@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles/sidepanel.css">
+</head>
+<body>
+  <!-- SVG flags sprite injected here -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" id="flags-sprite"></svg>
+
+  <div class="app">
+    <header class="header">
+      <span class="header__title" data-i18n="extShortName">Geo/Tier Builder</span>
+      <div class="header__actions">
+        <button class="btn-icon" id="btn-theme" title="Toggle theme">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="3.5"/>
+            <path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Main sections">
+      <button class="tabs__btn tabs__btn--active" data-tab="list" role="tab" aria-selected="true" aria-controls="panel-list">List</button>
+      <button class="tabs__btn" data-tab="import" role="tab" aria-selected="false" aria-controls="panel-import">Import</button>
+      <button class="tabs__btn" data-tab="presets" role="tab" aria-selected="false" aria-controls="panel-presets">Presets</button>
+      <button class="tabs__btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="panel-settings">Settings</button>
+    </nav>
+
+    <div class="panels">
+      <div class="panel panel--active" id="panel-list" role="tabpanel" aria-labelledby="tab-list">
+        <div class="toolbar" id="toolbar" role="toolbar" aria-label="Filters"></div>
+        <div class="bulk-bar" id="bulk-bar" style="display:none" role="status" aria-live="polite"></div>
+        <div class="country-list" id="country-list" role="list" aria-label="Countries"></div>
+        <div class="output-panel" id="output-panel" aria-label="Output"></div>
+      </div>
+      <div class="panel" id="panel-import" role="tabpanel" aria-labelledby="tab-import">
+        <div class="import-panel" id="import-panel"></div>
+      </div>
+      <div class="panel" id="panel-presets" role="tabpanel" aria-labelledby="tab-presets">
+        <div class="presets-panel" id="presets-panel"></div>
+      </div>
+      <div class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings">
+        <div class="settings-panel" id="settings-panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "geo-tier-builder",
+  "version": "0.1.0",
+  "description": "Build GEO allowlists/blocklists for 301.st TDS and other platforms.",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "build:edge": "wxt build -b edge",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "zip:edge": "wxt zip -b edge",
+    "zip:all": "wxt zip && wxt zip -b firefox && wxt zip -b edge",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src/ wxt.config.ts",
+    "lint:fix": "biome check --write src/ wxt.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "tsc --noEmit && biome check src/ wxt.config.ts && vitest run"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "flag-icons": "^7.5.0",
+    "svgo": "^4.0.0",
+    "svgstore": "^3.0.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18",
+    "wxt": "^0.19.0"
+  }
+}

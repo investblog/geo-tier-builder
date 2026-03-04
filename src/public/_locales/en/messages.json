@@ -1,0 +1,97 @@
+{
+  "extName": {
+    "message": "Geo/Tier Builder"
+  },
+  "extShortName": {
+    "message": "Geo/Tier Builder"
+  },
+  "extDescription": {
+    "message": "Build GEO allowlists and blocklists for 301.st TDS and other platforms."
+  },
+
+  "tabList": { "message": "List" },
+  "tabImport": { "message": "Import" },
+  "tabPresets": { "message": "Presets" },
+  "tabSettings": { "message": "Settings" },
+
+  "modeAllow": { "message": "Allow" },
+  "modeBlock": { "message": "Block" },
+
+  "searchPlaceholder": { "message": "Search countries…" },
+  "searchKbd": { "message": "Ctrl+K" },
+
+  "regionEUR": { "message": "Europe" },
+  "regionCIS": { "message": "CIS" },
+  "regionNA": { "message": "North America" },
+  "regionLATAM": { "message": "Latin America" },
+  "regionAPAC": { "message": "Asia-Pacific" },
+  "regionMENA": { "message": "Middle East & N. Africa" },
+  "regionAFR": { "message": "Africa" },
+  "regionOCE": { "message": "Oceania" },
+
+  "tagEU": { "message": "EU" },
+  "tagEEA": { "message": "EEA" },
+  "tagG7": { "message": "G7" },
+  "tagG20": { "message": "G20" },
+  "tagBRICS": { "message": "BRICS" },
+  "tagFIVE_EYES": { "message": "Five Eyes" },
+
+  "tierT1": { "message": "T1" },
+  "tierT2": { "message": "T2" },
+  "tierT3": { "message": "T3" },
+
+  "filterFavorites": { "message": "Favorites" },
+
+  "bulkClear": { "message": "Clear" },
+  "bulkInvert": { "message": "Invert" },
+  "bulkSelectFiltered": { "message": "Select filtered" },
+
+  "selectedOne": { "message": "1 selected" },
+  "selectedOther": {
+    "message": "$COUNT$ selected",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+
+  "outputCopy": { "message": "Copy" },
+  "outputCopied": { "message": "Copied!" },
+  "outputDownload": { "message": "Download" },
+  "outputSponsor": { "message": "Built for" },
+  "outputEmpty": { "message": "Select countries to generate output" },
+
+  "categoryGeneric": { "message": "Generic" },
+  "category301st": { "message": "301.st TDS" },
+  "categoryCloudflare": { "message": "Cloudflare" },
+  "categoryServer": { "message": "Server / JS" },
+
+  "importTitle": { "message": "Import countries" },
+  "importPlaceholder": { "message": "Paste country codes, names, or mixed list…" },
+  "importParse": { "message": "Parse" },
+  "importApply": { "message": "Apply to selection" },
+  "importMatched": { "message": "Matched" },
+  "importUnknown": { "message": "Unknown" },
+  "importDidYouMean": { "message": "Did you mean:" },
+
+  "presetsTitle": { "message": "Saved presets" },
+  "presetsSave": { "message": "Save current" },
+  "presetsEmpty": { "message": "No presets saved yet" },
+  "presetsLoad": { "message": "Load" },
+  "presetsRename": { "message": "Rename" },
+  "presetsDelete": { "message": "Delete" },
+  "presetsExport": { "message": "Export" },
+  "presetsImport": { "message": "Import" },
+
+  "settingsTheme": { "message": "Theme" },
+  "settingsThemeDark": { "message": "Dark" },
+  "settingsThemeLight": { "message": "Light" },
+  "settingsThemeAuto": { "message": "System" },
+  "settingsLanguage": { "message": "Language" },
+  "settingsDefaultMode": { "message": "Default mode" },
+  "settingsDefaultTemplate": { "message": "Default template" },
+  "settingsCustomTiers": { "message": "Custom tier overrides" },
+  "settingsCustomTiersDesc": { "message": "Override default tier assignments for specific countries" },
+  "settingsResetTiers": { "message": "Reset to defaults" },
+
+  "toggleTheme": { "message": "Toggle theme" },
+
+  "emptyState": { "message": "No countries match the current filters" }
+}
