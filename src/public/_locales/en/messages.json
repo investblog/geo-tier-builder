@@ -1,12 +1,12 @@
 {
   "extName": {
-    "message": "Geo/Tier Builder"
+    "message": "Geo Tier Builder — Country Tiers & GEO Lists"
   },
   "extShortName": {
-    "message": "Geo/Tier Builder"
+    "message": "Geo Tier Builder"
   },
   "extDescription": {
-    "message": "Build GEO allowlists and blocklists for 301.st TDS and other platforms."
+    "message": "Build tiered country lists and GEO allow/block segments for ad targeting, TDS rules, Cloudflare WAF, and traffic management."
   },
 
   "tabList": { "message": "List" },

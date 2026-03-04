@@ -1,12 +1,12 @@
 {
   "extName": {
-    "message": "Geo/Tier Builder"
+    "message": "Geo Tier Builder — Тиры стран и GEO-списки"
   },
   "extShortName": {
-    "message": "Geo/Tier Builder"
+    "message": "Geo Tier Builder"
   },
   "extDescription": {
-    "message": "Создавайте GEO-списки для 301.st TDS и других платформ."
+    "message": "Собирайте тирные списки стран и GEO allow/block сегменты для таргетинга, TDS, Cloudflare WAF и управления трафиком."
   },
 
   "tabList": { "message": "Список" },
