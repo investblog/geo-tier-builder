@@ -32,5 +32,9 @@ npm-debug.log*
 # Temp
 temp/
 
-# Claude Code local settings
+# Claude Code local settings & instructions
 .claude/
+CLAUDE.md
+
+# Specs & docs (not shipped)
+geo-tier-builder-spec.md
