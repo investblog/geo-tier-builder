@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Geo Tier Builder — Phân hạng quốc gia & Danh sách GEO"
+  },
+  "extDescription": {
+    "message": "Tạo danh sách quốc gia theo hạng và phân đoạn GEO cho phép/chặn để nhắm mục tiêu quảng cáo, quy tắc TDS, Cloudflare WAF và quản lý lưu lượng."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Geo Tier Builder — Tier Negara & Daftar GEO"
+  },
+  "extDescription": {
+    "message": "Buat daftar negara bertingkat dan segmen GEO allow/block untuk penargetan iklan, aturan TDS, Cloudflare WAF, dan manajemen lalu lintas."
+  }
+}

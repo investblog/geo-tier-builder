@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Geo Tier Builder — 国家分级与GEO列表"
+  },
+  "extDescription": {
+    "message": "为广告定向、TDS规则、Cloudflare WAF和流量管理创建分级国家列表和GEO允许/阻止分段。"
+  }
+}

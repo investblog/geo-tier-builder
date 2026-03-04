@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Geo Tier Builder — Tiers de pays et listes GEO"
+  },
+  "extDescription": {
+    "message": "Créez des listes de pays par tiers et des segments GEO allow/block pour le ciblage publicitaire, les règles TDS, Cloudflare WAF et la gestion du trafic."
+  }
+}
