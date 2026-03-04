@@ -20,6 +20,7 @@
   --gray-50: #F8FBFB;
 
   --danger: #FF4F6E;
+  --danger-hover: #FF6E87;
   --success: #18C27A;
   --warning: #FFB347;
   --info: #3B82F6;
@@ -143,6 +144,7 @@
   --input-border-focus: rgba(0, 85, 220, 0.8);
 
   --danger: #D9264A;
+  --danger-hover: #B01E3D;
   --success: #0E7B4C;
   --warning: #9A6200;
   --info: #2563EB;
