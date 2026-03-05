@@ -105,7 +105,7 @@ export function createSettingsPanel(container: HTMLElement, store: Store): { des
   });
 
   function renderTiersTable(): void {
-    tiersContainer.innerHTML = '';
+    tiersContainer.replaceChildren();
     const customs = store.current.customTiers;
     const entries = Object.entries(customs);
 
@@ -121,7 +121,13 @@ export function createSettingsPanel(container: HTMLElement, store: Store): { des
     table.className = 'tiers-table';
 
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Country</th><th>Default</th><th>Custom</th><th></th></tr>';
+    const headRow = document.createElement('tr');
+    for (const label of ['Country', 'Default', 'Custom', '']) {
+      const th = document.createElement('th');
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    thead.appendChild(headRow);
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
@@ -176,7 +182,7 @@ export function createSettingsPanel(container: HTMLElement, store: Store): { des
 
   return {
     destroy() {
-      container.innerHTML = '';
+      container.replaceChildren();
     },
   };
 }

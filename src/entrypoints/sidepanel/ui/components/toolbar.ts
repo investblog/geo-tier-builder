@@ -264,7 +264,7 @@ export function createToolbar(
     destroy() {
       unsub();
       document.removeEventListener('keydown', onKeydown);
-      container.innerHTML = '';
+      container.replaceChildren();
     },
   };
 }

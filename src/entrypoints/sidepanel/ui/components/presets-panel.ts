@@ -8,7 +8,7 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
   let renameValue = '';
 
   function render(): void {
-    container.innerHTML = '';
+    container.replaceChildren();
 
     // Header
     const header = document.createElement('div');
@@ -236,7 +236,7 @@ export function createPresetsPanel(container: HTMLElement, store: Store): { dest
   return {
     destroy() {
       unsub();
-      container.innerHTML = '';
+      container.replaceChildren();
     },
   };
 }

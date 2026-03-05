@@ -42,7 +42,7 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
     const parsed = parseCountryInput(input);
     lastMatched = parsed.matched;
     lastUnknown = parsed.unknown;
-    results.innerHTML = '';
+    results.replaceChildren();
     results.style.display = 'flex';
 
     // Summary line
@@ -105,12 +105,17 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
         const item = document.createElement('div');
         item.className = 'import-panel__unknown-token';
 
-        let html = `<span>${escapeHtml(token)}</span>`;
+        const tokenSpan = document.createElement('span');
+        tokenSpan.textContent = token;
+        item.appendChild(tokenSpan);
+
         const suggestions = parsed.suggestions.get(token);
         if (suggestions && suggestions.length > 0) {
-          html += `<span class="import-panel__suggestion">Did you mean: ${suggestions.join(', ')}?</span>`;
+          const sugSpan = document.createElement('span');
+          sugSpan.className = 'import-panel__suggestion';
+          sugSpan.textContent = `Did you mean: ${suggestions.join(', ')}?`;
+          item.appendChild(sugSpan);
         }
-        item.innerHTML = html;
         unknownList.appendChild(item);
       }
       results.appendChild(unknownList);
@@ -128,11 +133,7 @@ export function createImportPanel(container: HTMLElement, store: Store): { destr
 
   return {
     destroy() {
-      container.innerHTML = '';
+      container.replaceChildren();
     },
   };
-}
-
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

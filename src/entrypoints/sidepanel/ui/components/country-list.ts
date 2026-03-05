@@ -112,7 +112,7 @@ export function createCountryList(
     const activeSet = new Set(activeList);
     const favSet = new Set(store.current.favorites);
 
-    container.innerHTML = '';
+    container.replaceChildren();
 
     if (groups.length === 0) {
       const empty = document.createElement('div');
@@ -137,16 +137,40 @@ export function createCountryList(
       const allSelected = selectedInRegion === group.countries.length;
       const someSelected = selectedInRegion > 0 && !allSelected;
 
-      header.innerHTML = `
-        <input type="checkbox" class="region-header__checkbox" ${allSelected ? 'checked' : ''} aria-label="Select all ${REGION_LABELS[group.region]}" tabindex="-1">
-        <span class="region-header__name">${REGION_LABELS[group.region]}</span>
-        <span class="region-header__count">${group.countries.length}</span>
-        ${selectedInRegion > 0 ? `<span class="region-header__selected">${selectedInRegion} sel</span>` : ''}
-        <svg class="region-header__chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5l3 3 3-3"/></svg>
-      `;
-
-      const checkbox = header.querySelector<HTMLInputElement>('.region-header__checkbox')!;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'region-header__checkbox';
+      checkbox.checked = allSelected;
+      checkbox.setAttribute('aria-label', `Select all ${REGION_LABELS[group.region]}`);
+      checkbox.tabIndex = -1;
       if (someSelected) checkbox.indeterminate = true;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'region-header__name';
+      nameSpan.textContent = REGION_LABELS[group.region];
+
+      const countSpan = document.createElement('span');
+      countSpan.className = 'region-header__count';
+      countSpan.textContent = String(group.countries.length);
+
+      const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      chevron.setAttribute('class', 'region-header__chevron');
+      chevron.setAttribute('viewBox', '0 0 12 12');
+      chevron.setAttribute('fill', 'none');
+      chevron.setAttribute('stroke', 'currentColor');
+      chevron.setAttribute('stroke-width', '1.5');
+      const chevronPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      chevronPath.setAttribute('d', 'M3 4.5l3 3 3-3');
+      chevron.appendChild(chevronPath);
+
+      header.append(checkbox, nameSpan, countSpan);
+      if (selectedInRegion > 0) {
+        const selSpan = document.createElement('span');
+        selSpan.className = 'region-header__selected';
+        selSpan.textContent = `${selectedInRegion} sel`;
+        header.appendChild(selSpan);
+      }
+      header.appendChild(chevron);
 
       checkbox.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -184,14 +208,42 @@ export function createCountryList(
           row.tabIndex = 0;
           if (isSelected) row.classList.add('country-row--selected');
 
-          row.innerHTML = `
-            <input type="checkbox" class="country-row__checkbox" ${isSelected ? 'checked' : ''} aria-label="${country.name_en}" tabindex="-1">
-            <span class="country-row__iso">${country.iso2}</span>
-            <span class="country-row__name">${country.name_en}</span>
-            <span class="country-row__tier country-row__tier--${tier}">${tier}</span>
-            <svg class="country-row__star ${isFav ? 'country-row__star--active' : ''}" viewBox="0 0 24 24" role="button" aria-label="Toggle favorite" tabindex="-1"><path fill="currentColor" d="${isFav ? 'M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z' : 'M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z'}"/></svg>
-          `;
-          row.insertBefore(createFlagIcon(country.iso2), row.children[1]);
+          const rowCheckbox = document.createElement('input');
+          rowCheckbox.type = 'checkbox';
+          rowCheckbox.className = 'country-row__checkbox';
+          rowCheckbox.checked = isSelected;
+          rowCheckbox.setAttribute('aria-label', country.name_en);
+          rowCheckbox.tabIndex = -1;
+
+          const isoSpan = document.createElement('span');
+          isoSpan.className = 'country-row__iso';
+          isoSpan.textContent = country.iso2;
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'country-row__name';
+          nameSpan.textContent = country.name_en;
+
+          const tierSpan = document.createElement('span');
+          tierSpan.className = `country-row__tier country-row__tier--${tier}`;
+          tierSpan.textContent = tier;
+
+          const star = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          star.setAttribute('class', `country-row__star ${isFav ? 'country-row__star--active' : ''}`);
+          star.setAttribute('viewBox', '0 0 24 24');
+          star.setAttribute('role', 'button');
+          star.setAttribute('aria-label', 'Toggle favorite');
+          star.tabIndex = -1;
+          const starPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          starPath.setAttribute('fill', 'currentColor');
+          starPath.setAttribute(
+            'd',
+            isFav
+              ? 'M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z'
+              : 'M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z',
+          );
+          star.appendChild(starPath);
+
+          row.append(rowCheckbox, createFlagIcon(country.iso2), isoSpan, nameSpan, tierSpan, star);
 
           // Click row to toggle selection
           row.addEventListener('click', (e) => {
@@ -238,7 +290,7 @@ export function createCountryList(
       return;
     }
     bulkBar.style.display = 'flex';
-    bulkBar.innerHTML = '';
+    bulkBar.replaceChildren();
 
     const count = document.createElement('span');
     count.className = 'bulk-bar__count';
@@ -286,7 +338,7 @@ export function createCountryList(
     },
     destroy() {
       unsub();
-      container.innerHTML = '';
+      container.replaceChildren();
     },
   };
 }
