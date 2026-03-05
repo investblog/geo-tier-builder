@@ -212,7 +212,8 @@ export function createOutputPanel(container: HTMLElement, store: Store): { destr
 }
 
 function trustedHTML(html: string): DocumentFragment {
-  const t = document.createElement('template');
-  t.innerHTML = html;
-  return t.content;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const frag = document.createDocumentFragment();
+  while (doc.body.firstChild) frag.appendChild(doc.body.firstChild);
+  return frag;
 }
