@@ -78,7 +78,7 @@ export default defineConfig({
     ...(browser === 'firefox' && {
       browser_specific_settings: {
         gecko: {
-          id: 'geo-tier-builder@301.st',
+          id: 'gtb@301.st',
           strict_min_version: '142.0',
           data_collection_permissions: {
             required: ['none'],
