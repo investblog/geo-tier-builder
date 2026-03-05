@@ -44,7 +44,7 @@ export default defineConfig({
           ? '#' // TODO: addons.mozilla.org link
           : browser === 'edge'
             ? '#' // TODO: microsoftedge.microsoft.com link
-            : '#', // TODO: chromewebstore.google.com link
+            : 'https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn',
       ),
       __TARGET_BROWSER__: JSON.stringify(browser),
     },

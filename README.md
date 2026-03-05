@@ -32,7 +32,7 @@
 
 | Store | Link |
 |-------|------|
-| Chrome Web Store | _Coming soon_ |
+| Chrome Web Store | [Install](https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn) |
 | Firefox Add-ons | _Coming soon_ |
 | Edge Add-ons | _Coming soon_ |
 
