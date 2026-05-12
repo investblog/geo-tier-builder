@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnarAgaev/geo-tier-builder/releases">Releases</a> ·
+  <a href="https://github.com/investblog/geo-tier-builder/releases">Releases</a> ·
   <a href="https://301.st">301.st</a>
 </p>
 
@@ -33,7 +33,7 @@
 | Store | Link |
 |-------|------|
 | Chrome Web Store | [Install](https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn) |
-| Firefox Add-ons | _Coming soon_ |
+| Firefox Add-ons | [Install](https://addons.mozilla.org/en-US/firefox/addon/geo-tier-builder/) |
 | Edge Add-ons | _Coming soon_ |
 
 ## Build from source

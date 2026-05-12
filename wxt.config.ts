@@ -41,10 +41,10 @@ export default defineConfig({
     define: {
       __REVIEW_URL__: JSON.stringify(
         browser === 'firefox'
-          ? '#' // TODO: addons.mozilla.org link
+          ? 'https://addons.mozilla.org/en-US/firefox/addon/geo-tier-builder/?utm_source=extension'
           : browser === 'edge'
-            ? '#' // TODO: microsoftedge.microsoft.com link
-            : 'https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn',
+            ? 'https://microsoftedge.microsoft.com/addons/detail/plpmieeidepcechckjmanlgnjemdehga?utm_source=extension'
+            : 'https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn?utm_source=extension',
       ),
       __TARGET_BROWSER__: JSON.stringify(browser),
     },
