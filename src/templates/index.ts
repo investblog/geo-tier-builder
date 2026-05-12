@@ -2,10 +2,11 @@ import type { Template, TemplateCategory } from '@shared/types';
 import { cfWafExcludeSet, cfWafIncludeSet, cfWorkersSnippet } from './cloudflare';
 import { genericIso2Csv, genericIso2Newline, genericJsonArray, genericKeyValue } from './generic';
 import { jsCondition, nginxMap } from './serverjs';
-import { t301stIso2Csv } from './t301st';
+import { t301stAsnCsv, t301stIso2Csv } from './t301st';
 
 export const ALL_TEMPLATES: readonly Template[] = [
   t301stIso2Csv,
+  t301stAsnCsv,
   genericIso2Csv,
   genericIso2Newline,
   genericJsonArray,

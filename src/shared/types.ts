@@ -62,6 +62,19 @@ export interface RenderContext {
   include: string[];
   exclude: string[];
   countries: Country[];
+  asnInclude: string[];
+  asnExclude: string[];
+  networks: AdNetwork[];
+}
+
+export type AsnCategory = 'social' | 'search' | 'native' | 'mobile' | 'cis';
+
+export interface AdNetwork {
+  asn: number;
+  name: string;
+  category: AsnCategory;
+  platforms: string[];
+  notes: string;
 }
 
 export interface ParseResult {

@@ -1,0 +1,15 @@
+[
+  {"asn":32934,"name":"Meta","category":"social","platforms":["facebook","instagram","whatsapp","threads"],"notes":"FB/IG ad reviewers, FacebookExternalHit, Instagram crawler"},
+  {"asn":13414,"name":"X (Twitter)","category":"social","platforms":["x","twitter"],"notes":"Twitter ad review, Twitterbot"},
+  {"asn":14413,"name":"LinkedIn","category":"social","platforms":["linkedin","linkedin-ads"],"notes":"LinkedIn Ads review crawler, LinkedInBot"},
+  {"asn":62597,"name":"Snap","category":"social","platforms":["snapchat","snap-ads"],"notes":"Snap Ads review, Snapchat crawlers"},
+  {"asn":396986,"name":"ByteDance","category":"social","platforms":["tiktok","tiktok-ads","douyin"],"notes":"TikTok Ads review, ByteSpider main"},
+  {"asn":138699,"name":"ByteDance APAC","category":"social","platforms":["tiktok","tiktok-ads"],"notes":"TikTok APAC region infra"},
+  {"asn":714,"name":"Apple","category":"search","platforms":["apple-search-ads","app-store"],"notes":"Apple Search Ads infra, App Store reviewers"},
+  {"asn":15169,"name":"Google","category":"search","platforms":["google-ads","youtube","adwords","display","google-search"],"notes":"AdsBot-Google, Googlebot, Google Ads review, YouTube ads"},
+  {"asn":8075,"name":"Microsoft","category":"search","platforms":["bing-ads","microsoft-advertising"],"notes":"BingAds review, BingBot, Microsoft Advertising"},
+  {"asn":13238,"name":"Yandex","category":"search","platforms":["yandex-direct","yandex-ads","yandex-search"],"notes":"Yandex Direct ad review, YandexBot, Metrica"},
+  {"asn":38365,"name":"Baidu","category":"search","platforms":["baidu-ads","baidu-search"],"notes":"Baiduspider, Baidu ad infra"},
+  {"asn":44788,"name":"Criteo","category":"native","platforms":["criteo"],"notes":"Criteo retargeting and ad infra"},
+  {"asn":47764,"name":"Mail.ru / VK","category":"cis","platforms":["vk","vk-ads","mytarget","mail-ru","ok-ru"],"notes":"VK Ads, MyTarget, Mail.ru ad review, OK.ru"}
+]

@@ -8,6 +8,9 @@ function makeCtx(overrides: Partial<RenderContext> = {}): RenderContext {
     include: ['US', 'CA', 'GB'],
     exclude: ['RU', 'BY'],
     countries: [],
+    asnInclude: [],
+    asnExclude: [],
+    networks: [],
     ...overrides,
   };
 }
@@ -28,6 +31,13 @@ describe('templates', () => {
       const generic = getTemplatesByCategory('generic');
       expect(generic.length).toBe(4);
       expect(generic.every((t) => t.category === 'generic')).toBe(true);
+    });
+
+    it('301st category contains both iso2 and asn templates', () => {
+      const t301st = getTemplatesByCategory('301st');
+      const ids = t301st.map((t) => t.id);
+      expect(ids).toContain('301st.iso2.csv');
+      expect(ids).toContain('301st.asn.csv');
     });
   });
 
@@ -50,6 +60,36 @@ describe('templates', () => {
     it('renders single country', () => {
       const tpl = getTemplate('301st.iso2.csv')!;
       expect(tpl.render(makeCtx({ include: ['DE'] }))).toBe('DE');
+    });
+  });
+
+  describe('301st.asn.csv', () => {
+    it('renders asnInclude in allow mode', () => {
+      const tpl = getTemplate('301st.asn.csv')!;
+      const result = tpl.render(makeCtx({ asnInclude: ['32934', '15169', '8075'] }));
+      expect(result).toBe('32934,15169,8075');
+    });
+
+    it('renders asnExclude in block mode', () => {
+      const tpl = getTemplate('301st.asn.csv')!;
+      const result = tpl.render(makeCtx({ mode: 'block', asnExclude: ['32934', '13414'] }));
+      expect(result).toBe('32934,13414');
+    });
+
+    it('renders empty for no asn selection', () => {
+      const tpl = getTemplate('301st.asn.csv')!;
+      expect(tpl.render(makeCtx())).toBe('');
+    });
+
+    it('renders single asn', () => {
+      const tpl = getTemplate('301st.asn.csv')!;
+      expect(tpl.render(makeCtx({ asnInclude: ['15169'] }))).toBe('15169');
+    });
+
+    it('does not mix asn output with country selection', () => {
+      const tpl = getTemplate('301st.asn.csv')!;
+      const result = tpl.render(makeCtx({ include: ['US', 'CA'], asnInclude: ['15169'] }));
+      expect(result).toBe('15169');
     });
   });
 

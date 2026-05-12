@@ -193,6 +193,9 @@ export function createOutputPanel(container: HTMLElement, store: Store): { destr
       include: store.current.include,
       exclude: store.current.exclude,
       countries: ALL_COUNTRIES as any,
+      asnInclude: [],
+      asnExclude: [],
+      networks: [],
     };
 
     textarea.value = template.render(ctx);

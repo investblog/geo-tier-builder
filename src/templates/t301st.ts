@@ -10,3 +10,14 @@ export const t301stIso2Csv: Template = {
     return codes.join(',');
   },
 };
+
+export const t301stAsnCsv: Template = {
+  id: '301st.asn.csv',
+  name: '301.st ASN CSV',
+  category: '301st',
+  description: 'Comma-separated ASN numbers for 301.st TDS asn/asn_exclude fields',
+  render(ctx) {
+    const codes = ctx.mode === 'allow' ? ctx.asnInclude : ctx.asnExclude;
+    return codes.join(',');
+  },
+};
