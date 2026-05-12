@@ -1,5 +1,7 @@
 import { Store } from '@engine/store';
 import { initTheme, toggleTheme } from '@shared/theme';
+import { createAsnList } from './ui/components/asn-list';
+import { createAsnToolbar } from './ui/components/asn-toolbar';
 import { createCountryList } from './ui/components/country-list';
 import { createImportPanel } from './ui/components/import-panel';
 import { createOutputPanel } from './ui/components/output-panel';
@@ -66,6 +68,17 @@ async function init(): Promise<void> {
   const outputPanelEl = document.getElementById('output-panel')!;
   createOutputPanel(outputPanelEl, store);
 
+  // ASN tab
+  const asnToolbarEl = document.getElementById('asn-toolbar')!;
+  const asnBulkBarEl = document.getElementById('asn-bulk-bar')!;
+  const asnListEl = document.getElementById('asn-list')!;
+  const asnList = createAsnList(asnListEl, store, asnBulkBarEl);
+  createAsnToolbar(asnToolbarEl, store, (filters) => {
+    asnList.update(filters);
+  });
+  const asnOutputPanelEl = document.getElementById('asn-output-panel')!;
+  createOutputPanel(asnOutputPanelEl, store, '301st.asn.csv');
+
   // Import panel
   const importPanelEl = document.getElementById('import-panel')!;
   createImportPanel(importPanelEl, store);
@@ -85,6 +98,10 @@ async function init(): Promise<void> {
     activeTiers: new Set(),
     activeTags: new Set(),
     showFavorites: false,
+  });
+  asnList.update({
+    search: '',
+    activeCategories: new Set(),
   });
 }
 

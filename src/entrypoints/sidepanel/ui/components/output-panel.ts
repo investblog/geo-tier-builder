@@ -1,12 +1,19 @@
+import { getEffectiveNetworks } from '@engine/asn';
 import { ALL_COUNTRIES } from '@engine/countries';
 import type { Store } from '@engine/store';
-import type { RenderContext, TemplateCategory } from '@shared/types';
+import type { AdNetwork, RenderContext, TemplateCategory } from '@shared/types';
+import builtinAdNetworks from '@/data/ad-networks.v1.json' with { type: 'json' };
 import { ALL_TEMPLATES, CATEGORIES, CATEGORY_LABELS, getTemplatesByCategory } from '../../../../templates';
 import { showToast } from './toast';
 
-export function createOutputPanel(container: HTMLElement, store: Store): { destroy(): void } {
-  let currentCategory: TemplateCategory = '301st';
-  let currentTemplateId = '301st.iso2.csv';
+export function createOutputPanel(
+  container: HTMLElement,
+  store: Store,
+  defaultTemplateId = '301st.iso2.csv',
+): { destroy(): void } {
+  const defaultTemplate = ALL_TEMPLATES.find((t) => t.id === defaultTemplateId);
+  let currentCategory: TemplateCategory = defaultTemplate?.category ?? '301st';
+  let currentTemplateId = defaultTemplateId;
 
   container.classList.add('drawer');
 
@@ -47,12 +54,14 @@ export function createOutputPanel(container: HTMLElement, store: Store): { destr
       opt.textContent = tpl.name;
       tplSelect.appendChild(opt);
     }
-    if (templates.length > 0) {
+    if (!templates.some((t) => t.id === currentTemplateId) && templates.length > 0) {
       currentTemplateId = templates[0].id;
-      tplSelect.value = currentTemplateId;
     }
+    tplSelect.value = currentTemplateId;
     updateOutput();
   }
+
+  catSelect.value = currentCategory;
 
   catSelect.addEventListener('change', () => {
     currentCategory = catSelect.value as TemplateCategory;
@@ -188,14 +197,15 @@ export function createOutputPanel(container: HTMLElement, store: Store): { destr
       return;
     }
 
+    const networks = getEffectiveNetworks(builtinAdNetworks as AdNetwork[], store.current.customAdNetworks);
     const ctx: RenderContext = {
       mode: store.current.mode,
       include: store.current.include,
       exclude: store.current.exclude,
       countries: ALL_COUNTRIES as any,
-      asnInclude: [],
-      asnExclude: [],
-      networks: [],
+      asnInclude: store.current.asnInclude,
+      asnExclude: store.current.asnExclude,
+      networks,
     };
 
     textarea.value = template.render(ctx);

@@ -23,6 +23,7 @@
 
     <nav class="tabs" id="tabs" role="tablist" aria-label="Main sections">
       <button class="tabs__btn tabs__btn--active" data-tab="list" role="tab" aria-selected="true" aria-controls="panel-list"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="m10 14.465 7.36-5.73L19 7.465l-9-7-9 7 1.63 1.27m7.37 8.27-7.38-5.73L1 12.535l9 7 9-7-1.63-1.27z"/></svg>List</button>
+      <button class="tabs__btn" data-tab="asn" role="tab" aria-selected="false" aria-controls="panel-asn"><svg class="tabs__icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4V9zm6 0v6h6V9zm8 0v6h4V9zM4 4h16v3h2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v3h2zM2 17v3c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-3h-2v3H4v-3z"/></svg>ASN</button>
       <button class="tabs__btn" data-tab="import" role="tab" aria-selected="false" aria-controls="panel-import"><svg class="tabs__icon" viewBox="0 0 23 20"><path fill="currentColor" d="M3 0v6H1V0zM1 20h2v-6H1zm3-10a2 2 0 1 0-2 2c1.11 0 2-.89 2-2m19-6v12c0 1.11-.89 2-2 2H9a2 2 0 0 1-2-2v-4l-2-2 2-2V4a2 2 0 0 1 2-2h12c1.11 0 2 .89 2 2m-5 7h-8v2h8zm2-4H10v2h10z"/></svg>Import</button>
       <button class="tabs__btn" data-tab="presets" role="tab" aria-selected="false" aria-controls="panel-presets"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="M.485 9.01a.94.94 0 0 1-.352-1.305L1.561 5.24a.9.9 0 0 1 .448-.4L9.464.65a.9.9 0 0 1 .543-.171c.2 0 .39.057.542.171l7.522 4.228a.93.93 0 0 1 .42.438l1.38 2.399a.946.946 0 0 1-.343 1.295l-.952.552v4.723c0 .361-.2.676-.505.838L10.55 19.35a.9.9 0 0 1-.542.171c-.2 0-.39-.057-.543-.17l-7.522-4.228a.94.94 0 0 1-.505-.838V9.01a.97.97 0 0 1-.952 0m9.522-6.484v6.38l5.675-3.19zM3.342 13.723l5.713 3.218v-6.389L3.342 7.344zm13.33 0v-3.066l-4.761 2.761a1 1 0 0 1-.952.01v3.513zm-4.904-2.428 5.98-3.456-.553-.962-5.98 3.456z"/></svg>Presets</button>
       <button class="tabs__btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="panel-settings"><svg class="tabs__icon" viewBox="0 0 20 20"><path fill="currentColor" d="M9.73 13.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46a.49.49 0 0 0-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98L12.23.42a.506.506 0 0 0-.5-.42h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L2.3 9c-.04.34-.07.67-.07 1s.03.65.07.97L.19 12.63c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>Settings</button>
@@ -34,6 +35,12 @@
         <div class="bulk-bar" id="bulk-bar" style="display:none" role="status" aria-live="polite"></div>
         <div class="country-list" id="country-list" role="list" aria-label="Countries"></div>
         <div class="output-panel" id="output-panel" aria-label="Output"></div>
+      </div>
+      <div class="panel" id="panel-asn" role="tabpanel" aria-labelledby="tab-asn">
+        <div class="toolbar" id="asn-toolbar" role="toolbar" aria-label="ASN filters"></div>
+        <div class="bulk-bar" id="asn-bulk-bar" style="display:none" role="status" aria-live="polite"></div>
+        <div class="asn-list" id="asn-list" role="list" aria-label="Ad networks"></div>
+        <div class="output-panel" id="asn-output-panel" aria-label="Output"></div>
       </div>
       <div class="panel" id="panel-import" role="tabpanel" aria-labelledby="tab-import">
         <div class="import-panel" id="import-panel"></div>

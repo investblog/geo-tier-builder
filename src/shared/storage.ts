@@ -67,6 +67,20 @@ export const storage = {
     await set('customAdNetworks', networks);
   },
 
+  async getAsnInclude(): Promise<string[]> {
+    return get('asnInclude', []);
+  },
+  async setAsnInclude(codes: string[]): Promise<void> {
+    await set('asnInclude', codes);
+  },
+
+  async getAsnExclude(): Promise<string[]> {
+    return get('asnExclude', []);
+  },
+  async setAsnExclude(codes: string[]): Promise<void> {
+    await set('asnExclude', codes);
+  },
+
   async getSettings(): Promise<Settings> {
     return get('settings', {
       theme: 'auto',
