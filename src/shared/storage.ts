@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import type { CustomTiers, Preset, SelectionMode, Settings } from './types';
+import type { AdNetwork, CustomTiers, Preset, SelectionMode, Settings } from './types';
 
 const PREFIX = 'geoTierBuilder:';
 
@@ -58,6 +58,13 @@ export const storage = {
   },
   async setCustomTiers(tiers: CustomTiers): Promise<void> {
     await set('customTiers', tiers);
+  },
+
+  async getCustomAdNetworks(): Promise<AdNetwork[]> {
+    return get('customAdNetworks', []);
+  },
+  async setCustomAdNetworks(networks: AdNetwork[]): Promise<void> {
+    await set('customAdNetworks', networks);
   },
 
   async getSettings(): Promise<Settings> {

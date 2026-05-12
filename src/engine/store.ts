@@ -1,5 +1,5 @@
 import { storage } from '@shared/storage';
-import type { CustomTiers, Preset, SelectionMode } from '@shared/types';
+import type { AdNetwork, CustomTiers, Preset, SelectionMode } from '@shared/types';
 
 export interface StoreState {
   mode: SelectionMode;
@@ -7,6 +7,7 @@ export interface StoreState {
   exclude: string[];
   favorites: string[];
   customTiers: CustomTiers;
+  customAdNetworks: AdNetwork[];
   presets: Preset[];
 }
 
@@ -19,6 +20,7 @@ export class Store {
     exclude: [],
     favorites: [],
     customTiers: {},
+    customAdNetworks: [],
     presets: [],
   };
 
@@ -31,15 +33,16 @@ export class Store {
   }
 
   async init(): Promise<void> {
-    const [mode, include, exclude, favorites, customTiers, presets] = await Promise.all([
+    const [mode, include, exclude, favorites, customTiers, customAdNetworks, presets] = await Promise.all([
       storage.getMode(),
       storage.getInclude(),
       storage.getExclude(),
       storage.getFavorites(),
       storage.getCustomTiers(),
+      storage.getCustomAdNetworks(),
       storage.getPresets(),
     ]);
-    this.state = { mode, include, exclude, favorites, customTiers, presets };
+    this.state = { mode, include, exclude, favorites, customTiers, customAdNetworks, presets };
     this.notify();
   }
 
@@ -64,6 +67,7 @@ export class Store {
       storage.setExclude(this.state.exclude),
       storage.setFavorites(this.state.favorites),
       storage.setCustomTiers(this.state.customTiers),
+      storage.setCustomAdNetworks(this.state.customAdNetworks),
       storage.setPresets(this.state.presets),
     ]);
   }
@@ -94,6 +98,12 @@ export class Store {
 
   setCustomTiers(customTiers: CustomTiers): void {
     this.state = { ...this.state, customTiers };
+    this.notify();
+    this.scheduleSave();
+  }
+
+  setCustomAdNetworks(customAdNetworks: AdNetwork[]): void {
+    this.state = { ...this.state, customAdNetworks };
     this.notify();
     this.scheduleSave();
   }

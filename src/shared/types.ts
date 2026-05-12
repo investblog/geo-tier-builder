@@ -75,6 +75,7 @@ export interface AdNetwork {
   category: AsnCategory;
   platforms: string[];
   notes: string;
+  disabled?: boolean;
 }
 
 export interface ParseResult {

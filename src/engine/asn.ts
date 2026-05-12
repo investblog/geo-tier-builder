@@ -2,6 +2,24 @@ import type { AdNetwork, AsnCategory } from '@shared/types';
 
 export const ASN_CATEGORIES: readonly AsnCategory[] = ['social', 'search', 'native', 'mobile', 'cis'];
 
+export function getEffectiveNetworks(builtin: AdNetwork[], custom: AdNetwork[]): AdNetwork[] {
+  const customByAsn = new Map(custom.map((n) => [n.asn, n]));
+  const result: AdNetwork[] = [];
+  for (const b of builtin) {
+    const override = customByAsn.get(b.asn);
+    if (override) {
+      if (!override.disabled) result.push(override);
+      customByAsn.delete(b.asn);
+    } else {
+      result.push(b);
+    }
+  }
+  for (const c of customByAsn.values()) {
+    if (!c.disabled) result.push(c);
+  }
+  return result;
+}
+
 export const ASN_CATEGORY_LABELS: Record<AsnCategory, string> = {
   social: 'Social',
   search: 'Search & Display',

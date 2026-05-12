@@ -6,6 +6,7 @@ import {
   filterByCategory,
   filterByPlatform,
   findByAsn,
+  getEffectiveNetworks,
   searchNetworks,
 } from '@engine/asn';
 import type { AdNetwork, AsnCategory } from '@shared/types';
@@ -124,5 +125,80 @@ describe('asn engine', () => {
         expect(ASN_CATEGORY_LABELS[c as AsnCategory]).toBeTruthy();
       }
     });
+  });
+});
+
+describe('getEffectiveNetworks (override merge)', () => {
+  const builtin: AdNetwork[] = [
+    { asn: 32934, name: 'Meta', category: 'social', platforms: ['facebook'], notes: 'builtin' },
+    { asn: 15169, name: 'Google', category: 'search', platforms: ['google-ads'], notes: 'builtin' },
+    { asn: 44788, name: 'Criteo', category: 'native', platforms: ['criteo'], notes: 'builtin' },
+  ];
+
+  it('returns builtin unchanged when custom is empty', () => {
+    expect(getEffectiveNetworks(builtin, [])).toEqual(builtin);
+  });
+
+  it('appends new custom entries', () => {
+    const custom: AdNetwork[] = [
+      { asn: 398652, name: 'AppLovin', category: 'mobile', platforms: ['applovin'], notes: 'user-added' },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result).toHaveLength(4);
+    expect(findByAsn(result, 398652)?.name).toBe('AppLovin');
+  });
+
+  it('overrides builtin entry by matching asn', () => {
+    const custom: AdNetwork[] = [
+      { asn: 44788, name: 'Criteo (extended)', category: 'social', platforms: ['criteo', 'criteo-ads'], notes: 'user override' },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result).toHaveLength(3);
+    const criteo = findByAsn(result, 44788);
+    expect(criteo?.name).toBe('Criteo (extended)');
+    expect(criteo?.category).toBe('social');
+    expect(criteo?.platforms).toContain('criteo-ads');
+    expect(criteo?.notes).toBe('user override');
+  });
+
+  it('removes builtin entry when override has disabled:true', () => {
+    const custom: AdNetwork[] = [
+      { asn: 32934, name: 'Meta', category: 'social', platforms: [], notes: '', disabled: true },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result).toHaveLength(2);
+    expect(findByAsn(result, 32934)).toBeUndefined();
+    expect(findByAsn(result, 15169)).toBeDefined();
+  });
+
+  it('skips disabled-only custom entries that have no builtin match', () => {
+    const custom: AdNetwork[] = [
+      { asn: 99999, name: 'Phantom', category: 'social', platforms: [], notes: '', disabled: true },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result).toEqual(builtin);
+  });
+
+  it('preserves builtin order; custom additions append at end', () => {
+    const custom: AdNetwork[] = [
+      { asn: 1111, name: 'Custom1', category: 'mobile', platforms: [], notes: '' },
+      { asn: 2222, name: 'Custom2', category: 'native', platforms: [], notes: '' },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result.map((n) => n.asn)).toEqual([32934, 15169, 44788, 1111, 2222]);
+  });
+
+  it('handles mixed override + add + disable in one call', () => {
+    const custom: AdNetwork[] = [
+      { asn: 15169, name: 'Google (renamed)', category: 'search', platforms: ['google'], notes: 'user' },
+      { asn: 32934, name: 'Meta', category: 'social', platforms: [], notes: '', disabled: true },
+      { asn: 47764, name: 'Mail.ru', category: 'cis', platforms: ['vk'], notes: 'user added' },
+    ];
+    const result = getEffectiveNetworks(builtin, custom);
+    expect(result).toHaveLength(3); // Meta removed, Google overridden, Criteo kept, Mail.ru added
+    expect(findByAsn(result, 32934)).toBeUndefined();
+    expect(findByAsn(result, 15169)?.name).toBe('Google (renamed)');
+    expect(findByAsn(result, 44788)?.name).toBe('Criteo');
+    expect(findByAsn(result, 47764)?.name).toBe('Mail.ru');
   });
 });
