@@ -62,13 +62,12 @@ export function createSettingsPanel(container: HTMLElement, store: Store): { des
 
   // Add override button
   const addOverrideRow = document.createElement('div');
-  addOverrideRow.style.cssText = 'display:flex;gap:var(--space-2);align-items:center;margin-top:var(--space-2)';
+  addOverrideRow.className = 'tier-overrides__form';
 
   const countryInput = document.createElement('input');
   countryInput.type = 'text';
   countryInput.placeholder = 'ISO2 code (e.g. RU)';
   countryInput.className = 'search__input';
-  countryInput.style.cssText = 'width:100px;padding-left:var(--control-pad-x)';
 
   const tierSelect = document.createElement('select');
   for (const tier of TIERS) {

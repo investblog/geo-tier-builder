@@ -592,6 +592,27 @@ html, body {
   -webkit-box-orient: vertical;
 }
 
+/* ── Tier overrides form (in Settings) ── */
+.tier-overrides__form {
+  display: grid;
+  grid-template-columns: 110px 80px 1fr;
+  gap: var(--space-1);
+  align-items: center;
+  margin-top: var(--space-2);
+}
+
+.tier-overrides__form .search__input,
+.tier-overrides__form select {
+  padding: var(--control-pad-y) var(--control-pad-x);
+  border: 1px solid var(--input-border);
+  border-radius: var(--r-field);
+  background: var(--input-bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: var(--fs-control);
+  outline: none;
+}
+
 /* ── ASN overrides table (in Settings) ── */
 .asn-overrides {
   display: flex;
