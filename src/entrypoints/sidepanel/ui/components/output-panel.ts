@@ -1,19 +1,26 @@
 import { getEffectiveNetworks } from '@engine/asn';
 import { ALL_COUNTRIES } from '@engine/countries';
 import type { Store } from '@engine/store';
-import type { AdNetwork, RenderContext, TemplateCategory } from '@shared/types';
+import type { AdNetwork, RenderContext, TemplateCategory, TemplateInputType } from '@shared/types';
 import builtinAdNetworks from '@/data/ad-networks.v1.json' with { type: 'json' };
-import { ALL_TEMPLATES, CATEGORIES, CATEGORY_LABELS, getTemplatesByCategory } from '../../../../templates';
+import {
+  ALL_TEMPLATES,
+  CATEGORY_LABELS,
+  getCategoriesForInputType,
+  getTemplatesByCategoryAndInput,
+} from '../../../../templates';
 import { showToast } from './toast';
 
 export function createOutputPanel(
   container: HTMLElement,
   store: Store,
   defaultTemplateId = '301st.iso2.csv',
+  inputType: TemplateInputType = 'country',
 ): { destroy(): void } {
   const defaultTemplate = ALL_TEMPLATES.find((t) => t.id === defaultTemplateId);
   let currentCategory: TemplateCategory = defaultTemplate?.category ?? '301st';
   let currentTemplateId = defaultTemplateId;
+  const availableCategories = getCategoriesForInputType(inputType);
 
   container.classList.add('drawer');
 
@@ -35,7 +42,7 @@ export function createOutputPanel(
 
   const catSelect = document.createElement('select');
   catSelect.className = 'drawer__select';
-  for (const cat of CATEGORIES) {
+  for (const cat of availableCategories) {
     const opt = document.createElement('option');
     opt.value = cat;
     opt.textContent = CATEGORY_LABELS[cat];
@@ -47,7 +54,7 @@ export function createOutputPanel(
 
   function updateTemplateSelect(): void {
     tplSelect.replaceChildren();
-    const templates = getTemplatesByCategory(currentCategory);
+    const templates = getTemplatesByCategoryAndInput(currentCategory, inputType);
     for (const tpl of templates) {
       const opt = document.createElement('option');
       opt.value = tpl.id;
@@ -79,7 +86,7 @@ export function createOutputPanel(
   const textarea = document.createElement('textarea');
   textarea.className = 'drawer__textarea';
   textarea.readOnly = true;
-  textarea.placeholder = 'Select countries to generate output';
+  textarea.placeholder = inputType === 'asn' ? 'Select ASNs to generate output' : 'Select countries to generate output';
 
   // Actions row
   const actions = document.createElement('div');
@@ -118,7 +125,11 @@ export function createOutputPanel(
   clearBtn.className = 'btn btn--danger btn--sm';
   clearBtn.textContent = 'Clear';
   clearBtn.addEventListener('click', () => {
-    store.setActiveList([]);
+    if (inputType === 'asn') {
+      store.setActiveAsnList([]);
+    } else {
+      store.setActiveList([]);
+    }
   });
 
   const storeIcons: Record<string, { title: string; svg: string }> = {

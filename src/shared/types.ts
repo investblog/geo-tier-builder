@@ -51,11 +51,14 @@ export interface Template {
   id: string;
   name: string;
   category: TemplateCategory;
+  inputType: TemplateInputType;
   description: string;
   render: (ctx: RenderContext) => string;
 }
 
 export type TemplateCategory = '301st' | 'generic' | 'cloudflare' | 'server';
+
+export type TemplateInputType = 'country' | 'asn';
 
 export interface RenderContext {
   mode: SelectionMode;

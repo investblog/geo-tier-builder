@@ -77,7 +77,7 @@ async function init(): Promise<void> {
     asnList.update(filters);
   });
   const asnOutputPanelEl = document.getElementById('asn-output-panel')!;
-  createOutputPanel(asnOutputPanelEl, store, '301st.asn.csv');
+  createOutputPanel(asnOutputPanelEl, store, '301st.asn.csv', 'asn');
 
   // Import panel
   const importPanelEl = document.getElementById('import-panel')!;
