@@ -2,11 +2,11 @@
   <img src=".github/banner.png" alt="Geo Tier Builder" width="700">
 </p>
 
-<h3 align="center">Country Tiers & GEO Lists</h3>
+<h3 align="center">Country Tiers, GEO Lists & Ad-Network ASNs</h3>
 
 <p align="center">
-  Browser extension for building tiered country lists and GEO allow/block segments.<br>
-  For ad targeting, TDS rules, Cloudflare WAF, nginx, and traffic management.
+  Browser extension for building tiered country lists, GEO allow/block segments, and ad-network ASN filters.<br>
+  For ad targeting, traffic arbitrage, TDS rules, Cloudflare WAF, nginx, and traffic management.
 </p>
 
 <p align="center">
@@ -18,15 +18,38 @@
 
 ## Features
 
+### Countries
 - 249 countries with flags, regions, and tier classification (T1/T2/T3)
 - 8 region filters (EUR, CIS, NA, LATAM, APAC, MENA, AFR, OCE) + meta-groups (EU, EEA, G7, G20, BRICS, Five Eyes)
-- 10 export templates: 301.st TDS, CSV, JSON, JS array, Cloudflare WAF, nginx map, and more
-- Allow/Block mode with bulk operations (select all, invert, clear)
-- Import from any text (auto-detects country codes and names)
-- Preset system with favorites
-- Dark/Light/System theme
-- Zero tracking, zero network requests
-- Works offline — all data bundled
+- Custom tier overrides per country
+- Import from any text (auto-detects country codes, ISO3, names, aliases)
+
+### Ad-network ASNs
+- Curated dataset of 13 verified ASNs across 5 categories — social (Meta, X, LinkedIn, Snap, ByteDance/TikTok), search (Google, Microsoft, Yandex, Baidu, Apple), native (Criteo), and CIS (Mail.ru/VK)
+- Useful for arbitrage traffic filtering: detect ad-platform crawlers, whitelist/blocklist sources
+- Custom ASN overrides — add new entries, override builtin, or disable any entry you don't need
+- Search by name, ASN number, or platform tag (e.g. `tiktok`, `vk-ads`, `youtube`)
+
+### Export templates (18 total)
+- **301.st TDS** — ISO2 CSV (`US,CA,GB`) and ASN CSV (`32934,15169`) for direct paste into rule drawer
+- **Generic** — CSV / newline / JSON array (countries + ASN), plus `allow=…` / `block=…` lines
+- **Cloudflare** — WAF Include/Exclude Set expressions and Workers snippets, for both `ip.geoip.country` and `ip.geoip.asnum`
+- **Server / JS** — nginx `map` block, JavaScript `Set`-based conditions for countries and ASN
+
+### General
+- Allow/Block mode with bulk operations (select all, invert, select filtered, clear)
+- Preset system: save / load / pin / rename / delete, JSON import-export
+- Dark / Light / System theme
+- 17 store-listing locales (EN, RU, DE, ES, FR, IT, JA, KO, ZH-CN, ZH-TW, PT-BR, PL, TR, VI, TH, ID, HI)
+- Zero tracking, zero network requests — all data bundled, works offline
+- Minimal permissions: `sidePanel` + `storage` only
+
+## Use cases
+
+- **Traffic arbitrage** — block ad-platform moderation crawlers (FB AS32934, TikTok AS396986) on one funnel variant while showing them a clean page on another
+- **301.st TDS** — build allowlists/blocklists in 3 clicks and paste straight into `geo` / `asn` / `geo_exclude` / `asn_exclude` text fields
+- **Cloudflare** — generate ready-to-paste WAF expressions (`ip.geoip.country in {…}`, `ip.geoip.asnum in {…}`) or Workers JS snippets
+- **Self-hosted stacks** — drop the nginx `map` block or JS `Set` check into your edge logic
 
 ## Install
 
@@ -34,7 +57,7 @@
 |-------|------|
 | Chrome Web Store | [Install](https://chromewebstore.google.com/detail/dbckaneobldjifocakfojpebfkpbeghn) |
 | Firefox Add-ons | [Install](https://addons.mozilla.org/en-US/firefox/addon/geo-tier-builder/) |
-| Edge Add-ons | _Coming soon_ |
+| Edge Add-ons | [Install](https://microsoftedge.microsoft.com/addons/detail/plpmieeidepcechckjmanlgnjemdehga) |
 
 ## Build from source
 
@@ -51,7 +74,7 @@ npm run zip:all        # All 3 ZIPs
 ```bash
 npm run dev            # Chrome dev
 npm run dev:firefox    # Firefox dev
-npm run check          # typecheck + lint + tests
+npm run check          # typecheck + lint + tests (114 tests)
 ```
 
 ## License
