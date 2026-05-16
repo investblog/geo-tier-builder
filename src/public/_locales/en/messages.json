@@ -10,9 +10,17 @@
   },
 
   "tabList": { "message": "List" },
+  "tabRegex": { "message": "Regex" },
   "tabImport": { "message": "Import" },
   "tabPresets": { "message": "Presets" },
   "tabSettings": { "message": "Settings" },
+
+  "regexSlugsLabel": { "message": "Path slugs" },
+  "regexCatchAll": { "message": "Catch-all (.*)" },
+  "regexOutputLabel": { "message": "Regex for the TDS path field" },
+  "regexTesterLabel": { "message": "Test against sample paths" },
+  "regexEmptyWarning": { "message": "Empty pattern — leaving the TDS path field blank matches every request." },
+  "regexCatchAllWarning": { "message": "Catch-all matches every request. This rule MUST have the lowest priority (rules evaluate priority DESC, first match wins)." },
 
   "modeAllow": { "message": "Allow" },
   "modeBlock": { "message": "Block" },

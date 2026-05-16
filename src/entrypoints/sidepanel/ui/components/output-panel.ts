@@ -1,8 +1,6 @@
-import { getEffectiveNetworks } from '@engine/asn';
 import { ALL_COUNTRIES } from '@engine/countries';
 import type { Store } from '@engine/store';
-import type { AdNetwork, RenderContext, TemplateCategory, TemplateInputType } from '@shared/types';
-import builtinAdNetworks from '@/data/ad-networks.v1.json' with { type: 'json' };
+import type { RenderContext, TemplateCategory, TemplateInputType } from '@shared/types';
 import {
   ALL_TEMPLATES,
   CATEGORY_LABELS,
@@ -86,7 +84,7 @@ export function createOutputPanel(
   const textarea = document.createElement('textarea');
   textarea.className = 'drawer__textarea';
   textarea.readOnly = true;
-  textarea.placeholder = inputType === 'asn' ? 'Select ASNs to generate output' : 'Select countries to generate output';
+  textarea.placeholder = 'Select countries to generate output';
 
   // Actions row
   const actions = document.createElement('div');
@@ -125,11 +123,7 @@ export function createOutputPanel(
   clearBtn.className = 'btn btn--danger btn--sm';
   clearBtn.textContent = 'Clear';
   clearBtn.addEventListener('click', () => {
-    if (inputType === 'asn') {
-      store.setActiveAsnList([]);
-    } else {
-      store.setActiveList([]);
-    }
+    store.setActiveList([]);
   });
 
   const storeIcons: Record<string, { title: string; svg: string }> = {
@@ -208,15 +202,11 @@ export function createOutputPanel(
       return;
     }
 
-    const networks = getEffectiveNetworks(builtinAdNetworks as AdNetwork[], store.current.customAdNetworks);
     const ctx: RenderContext = {
       mode: store.current.mode,
       include: store.current.include,
       exclude: store.current.exclude,
       countries: ALL_COUNTRIES as any,
-      asnInclude: store.current.asnInclude,
-      asnExclude: store.current.asnExclude,
-      networks,
     };
 
     textarea.value = template.render(ctx);

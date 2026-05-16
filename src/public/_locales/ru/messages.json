@@ -10,9 +10,17 @@
   },
 
   "tabList": { "message": "Список" },
+  "tabRegex": { "message": "Regex" },
   "tabImport": { "message": "Импорт" },
   "tabPresets": { "message": "Пресеты" },
   "tabSettings": { "message": "Настройки" },
+
+  "regexSlugsLabel": { "message": "Слаги пути" },
+  "regexCatchAll": { "message": "Перехват всего (.*)" },
+  "regexOutputLabel": { "message": "Regex для поля path в TDS" },
+  "regexTesterLabel": { "message": "Проверка на примерах путей" },
+  "regexEmptyWarning": { "message": "Пустой паттерн — пустое поле path в TDS матчит любой запрос." },
+  "regexCatchAllWarning": { "message": "Перехват всего матчит любой запрос. У этого правила должен быть самый низкий priority (правила идут по priority DESC, выигрывает первое совпадение)." },
 
   "modeAllow": { "message": "Разрешить" },
   "modeBlock": { "message": "Блокировать" },
