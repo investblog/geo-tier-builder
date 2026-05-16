@@ -40,27 +40,3 @@ if (${ctx.mode === 'allow' ? '!' : ''}${setName}.has(countryCode)) {
 }`;
   },
 };
-
-export const jsAsnCondition: Template = {
-  id: 'js.asn.condition',
-  name: 'JS Condition (ASN)',
-  category: 'server',
-  inputType: 'asn',
-  description: 'JavaScript Set-based ASN check',
-  render(ctx) {
-    const codes = ctx.mode === 'allow' ? ctx.asnInclude : ctx.asnExclude;
-    if (codes.length === 0) return '// No ASNs selected';
-
-    const setItems = codes
-      .map((c) => Number(c))
-      .filter((n) => Number.isFinite(n))
-      .join(', ');
-    const setName = ctx.mode === 'allow' ? 'ALLOWED_ASN' : 'BLOCKED_ASN';
-
-    return `const ${setName} = new Set([${setItems}]);
-
-if (${ctx.mode === 'allow' ? '!' : ''}${setName}.has(asn)) {
-  // ${ctx.mode === 'allow' ? 'ASN not in allowlist' : 'ASN is blocked'}
-}`;
-  },
-};

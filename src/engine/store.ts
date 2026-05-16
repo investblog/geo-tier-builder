@@ -1,5 +1,5 @@
 import { storage } from '@shared/storage';
-import type { AdNetwork, CustomTiers, Preset, SelectionMode } from '@shared/types';
+import type { CustomTiers, Preset, SelectionMode } from '@shared/types';
 
 export interface StoreState {
   mode: SelectionMode;
@@ -7,9 +7,6 @@ export interface StoreState {
   exclude: string[];
   favorites: string[];
   customTiers: CustomTiers;
-  customAdNetworks: AdNetwork[];
-  asnInclude: string[];
-  asnExclude: string[];
   presets: Preset[];
 }
 
@@ -22,9 +19,6 @@ export class Store {
     exclude: [],
     favorites: [],
     customTiers: {},
-    customAdNetworks: [],
-    asnInclude: [],
-    asnExclude: [],
     presets: [],
   };
 
@@ -37,29 +31,24 @@ export class Store {
   }
 
   async init(): Promise<void> {
-    const [mode, include, exclude, favorites, customTiers, customAdNetworks, asnInclude, asnExclude, presets] =
-      await Promise.all([
-        storage.getMode(),
-        storage.getInclude(),
-        storage.getExclude(),
-        storage.getFavorites(),
-        storage.getCustomTiers(),
-        storage.getCustomAdNetworks(),
-        storage.getAsnInclude(),
-        storage.getAsnExclude(),
-        storage.getPresets(),
-      ]);
+    const [mode, include, exclude, favorites, customTiers, presets] = await Promise.all([
+      storage.getMode(),
+      storage.getInclude(),
+      storage.getExclude(),
+      storage.getFavorites(),
+      storage.getCustomTiers(),
+      storage.getPresets(),
+    ]);
     this.state = {
       mode,
       include,
       exclude,
       favorites,
       customTiers,
-      customAdNetworks,
-      asnInclude,
-      asnExclude,
       presets,
     };
+    // One-shot cleanup of orphaned keys from the removed ASN feature.
+    void storage.cleanupLegacyAsnKeys();
     this.notify();
   }
 
@@ -84,9 +73,6 @@ export class Store {
       storage.setExclude(this.state.exclude),
       storage.setFavorites(this.state.favorites),
       storage.setCustomTiers(this.state.customTiers),
-      storage.setCustomAdNetworks(this.state.customAdNetworks),
-      storage.setAsnInclude(this.state.asnInclude),
-      storage.setAsnExclude(this.state.asnExclude),
       storage.setPresets(this.state.presets),
     ]);
   }
@@ -119,36 +105,6 @@ export class Store {
     this.state = { ...this.state, customTiers };
     this.notify();
     this.scheduleSave();
-  }
-
-  setCustomAdNetworks(customAdNetworks: AdNetwork[]): void {
-    this.state = { ...this.state, customAdNetworks };
-    this.notify();
-    this.scheduleSave();
-  }
-
-  setAsnInclude(asnInclude: string[]): void {
-    this.state = { ...this.state, asnInclude };
-    this.notify();
-    this.scheduleSave();
-  }
-
-  setAsnExclude(asnExclude: string[]): void {
-    this.state = { ...this.state, asnExclude };
-    this.notify();
-    this.scheduleSave();
-  }
-
-  getActiveAsnList(): string[] {
-    return this.state.mode === 'allow' ? this.state.asnInclude : this.state.asnExclude;
-  }
-
-  setActiveAsnList(codes: string[]): void {
-    if (this.state.mode === 'allow') {
-      this.setAsnInclude(codes);
-    } else {
-      this.setAsnExclude(codes);
-    }
   }
 
   setPresets(presets: Preset[]): void {

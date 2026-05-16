@@ -2,11 +2,11 @@
   <img src=".github/banner.png" alt="Geo Tier Builder" width="700">
 </p>
 
-<h3 align="center">Country Tiers, GEO Lists & Ad-Network ASNs</h3>
+<h3 align="center">Country Tiers, GEO Lists & TDS Regex Helper</h3>
 
 <p align="center">
-  Browser extension for building tiered country lists, GEO allow/block segments, and ad-network ASN filters.<br>
-  For ad targeting, traffic arbitrage, TDS rules, Cloudflare WAF, nginx, and traffic management.
+  Browser extension for building tiered country lists, GEO allow/block segments, and 301.st TDS path regexes.<br>
+  For ad targeting, traffic arbitrage, TDS rules, Cloudflare WAF, and nginx.
 </p>
 
 <p align="center">
@@ -24,17 +24,16 @@
 - Custom tier overrides per country
 - Import from any text (auto-detects country codes, ISO3, names, aliases)
 
-### Ad-network ASNs
-- Curated dataset of 13 verified ASNs across 5 categories — social (Meta, X, LinkedIn, Snap, ByteDance/TikTok), search (Google, Microsoft, Yandex, Baidu, Apple), native (Criteo), and CIS (Mail.ru/VK)
-- Useful for arbitrage traffic filtering: detect ad-platform crawlers, whitelist/blocklist sources
-- Custom ASN overrides — add new entries, override builtin, or disable any entry you don't need
-- Search by name, ASN number, or platform tag (e.g. `tiktok`, `vk-ads`, `youtube`)
+### TDS regex helper
+- Turn a slug like `playfortuna` into a correctly anchored `^/playfortuna$` for the 301.st TDS `path` / `referrer` condition
+- Multi-slug alternation (`^/(vavada|riobet|playfortuna)$`), prefix / contains / ends modes, and a safe catch-all
+- Live tester — paste sample pathnames or URLs, see exactly what matches using the same `new RegExp(path).test(url.pathname)` semantics the TDS worker uses
 
-### Export templates (18 total)
-- **301.st TDS** — ISO2 CSV (`US,CA,GB`) and ASN CSV (`32934,15169`) for direct paste into rule drawer
-- **Generic** — CSV / newline / JSON array (countries + ASN), plus `allow=…` / `block=…` lines
-- **Cloudflare** — WAF Include/Exclude Set expressions and Workers snippets, for both `ip.geoip.country` and `ip.geoip.asnum`
-- **Server / JS** — nginx `map` block, JavaScript `Set`-based conditions for countries and ASN
+### Export templates (11 total)
+- **301.st TDS** — ISO2 CSV (`US,CA,GB`) for direct paste into the rule drawer
+- **Generic** — CSV / newline / JSON array, plus `allow=…` / `block=…` lines
+- **Cloudflare** — WAF Include/Exclude Set expressions and a Workers snippet (`ip.geoip.country`)
+- **Server / JS** — nginx `map` block and a JavaScript `Set`-based condition
 
 ### General
 - Allow/Block mode with bulk operations (select all, invert, select filtered, clear)
@@ -46,9 +45,9 @@
 
 ## Use cases
 
-- **Traffic arbitrage** — block ad-platform moderation crawlers (FB AS32934, TikTok AS396986) on one funnel variant while showing them a clean page on another
-- **301.st TDS** — build allowlists/blocklists in 3 clicks and paste straight into `geo` / `asn` / `geo_exclude` / `asn_exclude` text fields
-- **Cloudflare** — generate ready-to-paste WAF expressions (`ip.geoip.country in {…}`, `ip.geoip.asnum in {…}`) or Workers JS snippets
+- **301.st TDS geo** — build allowlists/blocklists in 3 clicks and paste straight into `geo` / `geo_exclude` text fields
+- **301.st TDS path** — generate a correct anchored regex for the rule `path` condition and test it against sample URLs before saving
+- **Cloudflare** — generate ready-to-paste WAF expressions (`ip.geoip.country in {…}`) or a Workers JS snippet
 - **Self-hosted stacks** — drop the nginx `map` block or JS `Set` check into your edge logic
 
 ## Install

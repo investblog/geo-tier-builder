@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import type { AdNetwork, CustomTiers, Preset, SelectionMode, Settings } from './types';
+import type { CustomTiers, Preset, SelectionMode, Settings } from './types';
 
 const PREFIX = 'geoTierBuilder:';
 
@@ -60,25 +60,11 @@ export const storage = {
     await set('customTiers', tiers);
   },
 
-  async getCustomAdNetworks(): Promise<AdNetwork[]> {
-    return get('customAdNetworks', []);
-  },
-  async setCustomAdNetworks(networks: AdNetwork[]): Promise<void> {
-    await set('customAdNetworks', networks);
-  },
-
-  async getAsnInclude(): Promise<string[]> {
-    return get('asnInclude', []);
-  },
-  async setAsnInclude(codes: string[]): Promise<void> {
-    await set('asnInclude', codes);
-  },
-
-  async getAsnExclude(): Promise<string[]> {
-    return get('asnExclude', []);
-  },
-  async setAsnExclude(codes: string[]): Promise<void> {
-    await set('asnExclude', codes);
+  // Legacy keys `geoTierBuilder:asnInclude/asnExclude/customAdNetworks` may
+  // still exist for users who had the removed ASN feature. Nothing reads them;
+  // store.init() removes them once via cleanupLegacyAsnKeys().
+  async cleanupLegacyAsnKeys(): Promise<void> {
+    await browser.storage.local.remove([key('asnInclude'), key('asnExclude'), key('customAdNetworks')]);
   },
 
   async getSettings(): Promise<Settings> {

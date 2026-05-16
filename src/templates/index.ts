@@ -1,43 +1,20 @@
 import type { Template, TemplateCategory, TemplateInputType } from '@shared/types';
-import {
-  cfWafAsnExcludeSet,
-  cfWafAsnIncludeSet,
-  cfWafExcludeSet,
-  cfWafIncludeSet,
-  cfWorkersAsnSnippet,
-  cfWorkersSnippet,
-} from './cloudflare';
-import {
-  genericAsnCsv,
-  genericAsnJson,
-  genericAsnNewline,
-  genericIso2Csv,
-  genericIso2Newline,
-  genericJsonArray,
-  genericKeyValue,
-} from './generic';
-import { jsAsnCondition, jsCondition, nginxMap } from './serverjs';
-import { t301stAsnCsv, t301stIso2Csv } from './t301st';
+import { cfWafExcludeSet, cfWafIncludeSet, cfWorkersSnippet } from './cloudflare';
+import { genericIso2Csv, genericIso2Newline, genericJsonArray, genericKeyValue } from './generic';
+import { jsCondition, nginxMap } from './serverjs';
+import { t301stIso2Csv } from './t301st';
 
 export const ALL_TEMPLATES: readonly Template[] = [
   t301stIso2Csv,
-  t301stAsnCsv,
   genericIso2Csv,
   genericIso2Newline,
   genericJsonArray,
   genericKeyValue,
-  genericAsnCsv,
-  genericAsnNewline,
-  genericAsnJson,
   cfWafIncludeSet,
   cfWafExcludeSet,
   cfWorkersSnippet,
-  cfWafAsnIncludeSet,
-  cfWafAsnExcludeSet,
-  cfWorkersAsnSnippet,
   nginxMap,
   jsCondition,
-  jsAsnCondition,
 ];
 
 const templateMap = new Map<string, Template>(ALL_TEMPLATES.map((t) => [t.id, t]));

@@ -58,27 +58,13 @@ export interface Template {
 
 export type TemplateCategory = '301st' | 'generic' | 'cloudflare' | 'server';
 
-export type TemplateInputType = 'country' | 'asn';
+export type TemplateInputType = 'country';
 
 export interface RenderContext {
   mode: SelectionMode;
   include: string[];
   exclude: string[];
   countries: Country[];
-  asnInclude: string[];
-  asnExclude: string[];
-  networks: AdNetwork[];
-}
-
-export type AsnCategory = 'social' | 'search' | 'native' | 'mobile' | 'cis';
-
-export interface AdNetwork {
-  asn: number;
-  name: string;
-  category: AsnCategory;
-  platforms: string[];
-  notes: string;
-  disabled?: boolean;
 }
 
 export interface ParseResult {

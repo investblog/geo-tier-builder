@@ -49,39 +49,3 @@ export const genericKeyValue: Template = {
     return lines.join('\n');
   },
 };
-
-export const genericAsnCsv: Template = {
-  id: 'generic.asn.csv',
-  name: 'ASN CSV',
-  category: 'generic',
-  inputType: 'asn',
-  description: 'Comma-separated ASN numbers',
-  render(ctx) {
-    const codes = ctx.mode === 'allow' ? ctx.asnInclude : ctx.asnExclude;
-    return codes.join(',');
-  },
-};
-
-export const genericAsnNewline: Template = {
-  id: 'generic.asn.newline',
-  name: 'ASN Newline',
-  category: 'generic',
-  inputType: 'asn',
-  description: 'One ASN per line',
-  render(ctx) {
-    const codes = ctx.mode === 'allow' ? ctx.asnInclude : ctx.asnExclude;
-    return codes.join('\n');
-  },
-};
-
-export const genericAsnJson: Template = {
-  id: 'generic.asn.json',
-  name: 'ASN JSON Array',
-  category: 'generic',
-  inputType: 'asn',
-  description: 'JSON array of ASN numbers',
-  render(ctx) {
-    const codes = ctx.mode === 'allow' ? ctx.asnInclude : ctx.asnExclude;
-    return JSON.stringify(codes.map((c) => Number(c)));
-  },
-};
