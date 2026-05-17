@@ -89,13 +89,15 @@ A `v*` tag drives two GitHub Actions workflows in parallel:
 
 - **`release.yml`** — typecheck/lint/test, `zip:all`, and a GitHub Release
   with the Chrome/Firefox/Edge/sources ZIPs.
-- **`submit.yml`** — submits the **Chrome** build to the Web Store
-  automatically (it's then in Google review; publishes on approval).
+- **`submit.yml`** — submits the **Chrome** and **Edge** builds to their
+  stores automatically (then in store review; publishes on approval).
 
-The **Chrome Web Store** path is fully automated (credentials are stored as
-GitHub repo secrets). Firefox and Edge are still manual uploads for now.
-`submit.yml` can also be run by hand (Actions → *Submit to stores*) with a
-`dry_run` toggle to validate credentials without publishing.
+**Chrome** and **Edge** are fully automated on tag (neither store burns
+version numbers). **Firefox/AMO** is intentionally **manual-only** — AMO
+burns version numbers forever, so it's run by hand: Actions → *Submit to
+stores* → pick `stores` (chrome/firefox/edge/all) with a `dry_run` toggle
+to validate credentials without publishing. All store credentials are
+GitHub repo secrets.
 
 ## License
 
