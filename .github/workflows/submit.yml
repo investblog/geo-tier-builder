@@ -1,18 +1,23 @@
 name: Submit to stores
 
-# Two ways in:
-#   - push a v* tag  -> Chrome is submitted to the Web Store AUTOMATICALLY
-#     (real submit, in parallel with release.yml which makes the GH release).
-#   - manual run (Actions -> Submit to stores -> Run workflow) -> pick a tag
-#     and dry_run (default true: validates credentials, publishes nothing).
-#     Use the manual path for dry-run checks and, later, other stores.
+# Chrome:
+#   - push a v* tag  -> submitted to the Web Store AUTOMATICALLY (real,
+#     in parallel with release.yml).
+#   - manual run      -> when "stores" is chrome/both; honors dry_run.
 #
-# Credentials live in GitHub repo secrets (Settings -> Secrets and variables
-# -> Actions), never in the repo:
+# Firefox:
+#   - MANUAL ONLY (never on tag push) — AMO burns version numbers forever,
+#     so it stays a deliberate, human-triggered step. Manual run with
+#     "stores" = firefox/both; honors dry_run. Submits the build + the
+#     sources zip (AMO requires source for built extensions).
+#
+# Credentials are GitHub repo secrets (Settings -> Secrets and variables ->
+# Actions), never in the repo:
 #   CHROME_EXTENSION_ID, CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
-# Requires the Chrome Web Store API enabled in the GCP project of the OAuth
-# client (otherwise a valid token still 403s with SERVICE_DISABLED).
-# Firefox/Edge will be added here once those credentials exist.
+#   FIREFOX_EXTENSION_ID, FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET
+# Chrome also needs the Chrome Web Store API enabled in the OAuth client's
+# GCP project (else a valid token 403s with SERVICE_DISABLED).
+# Edge to be added later.
 
 on:
   push:
@@ -23,6 +28,14 @@ on:
       tag:
         description: 'Release tag to submit (e.g. v0.3.0)'
         required: true
+      stores:
+        description: 'Which store(s) to submit'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - both
+        default: chrome
       dry_run:
         description: 'Dry run (validate credentials only, publish nothing)'
         type: boolean
@@ -38,12 +51,13 @@ permissions:
 
 jobs:
   submit-chrome:
+    # Auto on tag push; on manual run only when chrome/both is chosen.
+    if: ${{ github.event_name == 'push' || inputs.stores == 'chrome' || inputs.stores == 'both' }}
     runs-on: ubuntu-latest
     env:
       # Tag push -> real submit. Manual run -> honor the dry_run checkbox.
       REF: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
       DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
-
     steps:
       - name: Checkout the release tag
         uses: actions/checkout@v6
@@ -73,17 +87,62 @@ jobs:
           CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
         run: |
           set -euo pipefail
-          # Clean checkout has exactly one chrome zip; assert it to avoid
-          # ever submitting a stale version.
           mapfile -t ZIPS < <(ls dist/*-chrome.zip)
           if [ "${#ZIPS[@]}" -ne 1 ]; then
             echo "Expected exactly one dist/*-chrome.zip, found ${#ZIPS[@]}: ${ZIPS[*]}" >&2
             exit 1
           fi
-          CHROME_ZIP="${ZIPS[0]}"
-          echo "Ref: $REF  |  zip: $CHROME_ZIP  |  dry_run: $DRY"
+          echo "Ref: $REF  |  zip: ${ZIPS[0]}  |  dry_run: $DRY"
           if [ "$DRY" = "true" ]; then
-            npx wxt submit --dry-run --chrome-zip "$CHROME_ZIP"
+            npx wxt submit --dry-run --chrome-zip "${ZIPS[0]}"
           else
-            npx wxt submit --chrome-zip "$CHROME_ZIP"
+            npx wxt submit --chrome-zip "${ZIPS[0]}"
+          fi
+
+  submit-firefox:
+    # Manual only. AMO burns versions -> never auto on tag.
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.stores == 'firefox' || inputs.stores == 'both') }}
+    runs-on: ubuntu-latest
+    env:
+      REF: ${{ inputs.tag }}
+      DRY: ${{ inputs.dry_run }}
+    steps:
+      - name: Checkout the release tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.REF }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare WXT types
+        run: npx wxt prepare
+
+      - name: Build Firefox zip + sources zip
+        run: npm run zip:firefox
+
+      - name: Submit to Firefox Add-ons
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          mapfile -t FX < <(ls dist/*-firefox.zip)
+          mapfile -t SRC < <(ls dist/*-sources.zip)
+          if [ "${#FX[@]}" -ne 1 ] || [ "${#SRC[@]}" -ne 1 ]; then
+            echo "Expected one firefox zip and one sources zip; got fx=${FX[*]} src=${SRC[*]}" >&2
+            exit 1
+          fi
+          echo "Ref: $REF  |  fx: ${FX[0]}  |  sources: ${SRC[0]}  |  dry_run: $DRY"
+          if [ "$DRY" = "true" ]; then
+            npx wxt submit --dry-run --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"
+          else
+            npx wxt submit --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"
           fi
