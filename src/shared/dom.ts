@@ -14,3 +14,15 @@ export function createFlagIcon(iso2: string, className = 'country-row__flag'): S
 
   return svg;
 }
+
+/**
+ * Parse a trusted, hard-coded HTML string into a DocumentFragment via DOMParser
+ * (no innerHTML — AMO compliance). Only ever called with static markup defined
+ * in source, never user input.
+ */
+export function trustedHTML(html: string): DocumentFragment {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const frag = document.createDocumentFragment();
+  while (doc.body.firstChild) frag.appendChild(doc.body.firstChild);
+  return frag;
+}

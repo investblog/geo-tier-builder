@@ -1,6 +1,7 @@
 import { Store } from '@engine/store';
 import { initTheme, toggleTheme } from '@shared/theme';
 import { createCountryList } from './ui/components/country-list';
+import { createFooter } from './ui/components/footer';
 import { createImportPanel } from './ui/components/import-panel';
 import { createOutputPanel } from './ui/components/output-panel';
 import { createPresetsPanel } from './ui/components/presets-panel';
@@ -45,6 +46,9 @@ for (const tab of tabs) {
     }
   });
 }
+
+// Global footer (brand/support links — visible on every tab)
+createFooter(document.getElementById('app-footer')!);
 
 // Init store (async — everything below depends on store data)
 const store = new Store();

@@ -522,6 +522,50 @@ html, body {
   color: var(--warning);
 }
 
+/* Info card — adapted from 301-ui .card--accent-info (left accent bar). */
+.regex-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  padding-left: calc(var(--space-3) + 4px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.regex-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-left: 4px solid var(--info);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.regex-card__text {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-subtle);
+}
+
+.regex-card__link {
+  align-self: flex-start;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.regex-card__link:hover,
+.regex-card__link:focus-visible {
+  text-decoration: underline;
+}
+
 .regex-tester {
   display: flex;
   flex-direction: column;
@@ -632,29 +676,35 @@ html, body {
   transition: background var(--transition-fast);
 }
 
-.drawer__sponsor {
-  display: inline-flex;
+/* ── Global footer (brand/support links, visible on every tab) ── */
+.app-footer {
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
   flex-shrink: 0;
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
 }
 
-.drawer__sponsor a {
+.app-footer a {
   display: inline-flex;
   opacity: 0.4;
   transition: opacity var(--transition-fast);
 }
 
-.drawer__sponsor a:hover {
+.app-footer a:hover,
+.app-footer a:focus-visible {
   opacity: 1;
 }
 
-.drawer__brand-icon {
+.app-footer__icon {
   width: 16px;
   height: 16px;
 }
 
-.drawer__sep {
+.app-footer__sep {
   width: 1px;
   height: 12px;
   background: var(--border-default);
@@ -721,10 +771,6 @@ html, body {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-}
-
-.drawer__actions .drawer__sponsor {
-  margin-left: auto;
 }
 
 /* ── Import panel ── */
