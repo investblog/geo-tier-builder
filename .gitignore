@@ -25,6 +25,8 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+.env.submit
+.env.*.local
 
 # Zip files (for store submission)
 *.zip
