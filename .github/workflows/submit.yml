@@ -1,27 +1,37 @@
 name: Submit to stores
 
-# Manual gate, separate from release.yml. Flow:
-#   1. push v* tag  -> release.yml builds + creates the GitHub release
-#   2. verify the release
-#   3. run THIS workflow (Actions tab -> Submit to stores -> Run workflow)
-#      Defaults to --dry-run: only validates credentials, publishes nothing.
-#      Uncheck "dry_run" to actually submit to the Chrome Web Store.
+# Two ways in:
+#   - push a v* tag  -> Chrome is submitted to the Web Store AUTOMATICALLY
+#     (real submit, in parallel with release.yml which makes the GH release).
+#   - manual run (Actions -> Submit to stores -> Run workflow) -> pick a tag
+#     and dry_run (default true: validates credentials, publishes nothing).
+#     Use the manual path for dry-run checks and, later, other stores.
 #
 # Credentials live in GitHub repo secrets (Settings -> Secrets and variables
 # -> Actions), never in the repo:
 #   CHROME_EXTENSION_ID, CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
-# Firefox/Edge will be added here once Chrome is proven.
+# Requires the Chrome Web Store API enabled in the GCP project of the OAuth
+# client (otherwise a valid token still 403s with SERVICE_DISABLED).
+# Firefox/Edge will be added here once those credentials exist.
 
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to submit (e.g. v0.3.0) — checked out so the upload matches the release'
+        description: 'Release tag to submit (e.g. v0.3.0)'
         required: true
       dry_run:
         description: 'Dry run (validate credentials only, publish nothing)'
         type: boolean
         default: true
+
+# One submission per ref at a time; never cancel an in-flight upload.
+concurrency:
+  group: submit-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -29,12 +39,16 @@ permissions:
 jobs:
   submit-chrome:
     runs-on: ubuntu-latest
+    env:
+      # Tag push -> real submit. Manual run -> honor the dry_run checkbox.
+      REF: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
 
     steps:
       - name: Checkout the release tag
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ env.REF }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -59,10 +73,16 @@ jobs:
           CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
         run: |
           set -euo pipefail
-          CHROME_ZIP="$(ls dist/*-chrome.zip)"
-          echo "Chrome zip: $CHROME_ZIP"
-          echo "Tag: ${{ inputs.tag }}  |  dry_run: ${{ inputs.dry_run }}"
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          # Clean checkout has exactly one chrome zip; assert it to avoid
+          # ever submitting a stale version.
+          mapfile -t ZIPS < <(ls dist/*-chrome.zip)
+          if [ "${#ZIPS[@]}" -ne 1 ]; then
+            echo "Expected exactly one dist/*-chrome.zip, found ${#ZIPS[@]}: ${ZIPS[*]}" >&2
+            exit 1
+          fi
+          CHROME_ZIP="${ZIPS[0]}"
+          echo "Ref: $REF  |  zip: $CHROME_ZIP  |  dry_run: $DRY"
+          if [ "$DRY" = "true" ]; then
             npx wxt submit --dry-run --chrome-zip "$CHROME_ZIP"
           else
             npx wxt submit --chrome-zip "$CHROME_ZIP"

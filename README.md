@@ -29,7 +29,7 @@
 - Multi-slug alternation (`^/(vavada|riobet|playfortuna)$`), prefix / contains / ends modes, and a safe catch-all
 - Live tester — paste sample pathnames or URLs, see exactly what matches using the same `new RegExp(path).test(url.pathname)` semantics the TDS worker uses
 
-### Export templates (11 total)
+### Export templates (10 total)
 - **301.st TDS** — ISO2 CSV (`US,CA,GB`) for direct paste into the rule drawer
 - **Generic** — CSV / newline / JSON array, plus `allow=…` / `block=…` lines
 - **Cloudflare** — WAF Include/Exclude Set expressions and a Workers snippet (`ip.geoip.country`)
@@ -73,8 +73,29 @@ npm run zip:all        # All 3 ZIPs
 ```bash
 npm run dev            # Chrome dev
 npm run dev:firefox    # Firefox dev
-npm run check          # typecheck + lint + tests (114 tests)
+npm run check          # typecheck + lint + tests (96 tests)
 ```
+
+## Releasing
+
+The version lives **only** in `wxt.config.ts` (`manifest.version`); `package.json`
+is not used by the build. To cut a release, bump it, then push a tag:
+
+```bash
+git tag v0.3.0 && git push origin v0.3.0
+```
+
+A `v*` tag drives two GitHub Actions workflows in parallel:
+
+- **`release.yml`** — typecheck/lint/test, `zip:all`, and a GitHub Release
+  with the Chrome/Firefox/Edge/sources ZIPs.
+- **`submit.yml`** — submits the **Chrome** build to the Web Store
+  automatically (it's then in Google review; publishes on approval).
+
+The **Chrome Web Store** path is fully automated (credentials are stored as
+GitHub repo secrets). Firefox and Edge are still manual uploads for now.
+`submit.yml` can also be run by hand (Actions → *Submit to stores*) with a
+`dry_run` toggle to validate credentials without publishing.
 
 ## License
 
