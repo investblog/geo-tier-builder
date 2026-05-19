@@ -1,0 +1,134 @@
+name: store-submit (reusable)
+
+# Reusable store-submission workflow shared across all investblog WXT
+# extensions. Callers: a tiny per-repo workflow that triggers on `v*`
+# tag push (+ manual dispatch) and `uses:` this with `secrets: inherit`.
+#
+# The CALLER repo must hold the per-store secrets (investblog is a User
+# account, no org secrets). API creds are account-level and identical
+# across repos; only the per-extension IDs differ:
+#   Chrome:  CHROME_EXTENSION_ID + CHROME_CLIENT_ID/CLIENT_SECRET/REFRESH_TOKEN
+#   Firefox: FIREFOX_EXTENSION_ID + FIREFOX_JWT_ISSUER/JWT_SECRET
+#   Edge:    EDGE_PRODUCT_ID + EDGE_CLIENT_ID/API_KEY
+#
+# Firefox is gated to workflow_dispatch only (AMO burns version numbers
+# forever) — this safety rule is centralized here, not per caller.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Git ref (tag) to check out so the upload matches the release'
+        required: true
+        type: string
+      dry_run:
+        description: 'Validate credentials only, publish nothing'
+        default: false
+        type: boolean
+      chrome:
+        default: false
+        type: boolean
+      firefox:
+        default: false
+        type: boolean
+      edge:
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  chrome:
+    if: ${{ inputs.chrome }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx wxt prepare
+      - run: npm run zip
+      - name: Submit to Chrome Web Store
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: |
+          set -euo pipefail
+          mapfile -t Z < <(ls dist/*-chrome.zip)
+          [ "${#Z[@]}" -eq 1 ] || { echo "expected 1 chrome zip, got ${#Z[@]}: ${Z[*]}" >&2; exit 1; }
+          echo "ref=${{ inputs.ref }} zip=${Z[0]} dry_run=${{ inputs.dry_run }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npx wxt submit --dry-run --chrome-zip "${Z[0]}"
+          else
+            npx wxt submit --chrome-zip "${Z[0]}"
+          fi
+
+  edge:
+    if: ${{ inputs.edge }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx wxt prepare
+      - run: npm run zip:edge
+      - name: Submit to Edge Add-ons
+        env:
+          EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        run: |
+          set -euo pipefail
+          mapfile -t Z < <(ls dist/*-edge.zip)
+          [ "${#Z[@]}" -eq 1 ] || { echo "expected 1 edge zip, got ${#Z[@]}: ${Z[*]}" >&2; exit 1; }
+          echo "ref=${{ inputs.ref }} zip=${Z[0]} dry_run=${{ inputs.dry_run }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npx wxt submit --dry-run --edge-zip "${Z[0]}"
+          else
+            npx wxt submit --edge-zip "${Z[0]}"
+          fi
+
+  firefox:
+    # AMO burns versions -> manual only, never on a tag push. Centralized
+    # here so no caller can accidentally auto-submit Firefox on tag.
+    if: ${{ inputs.firefox && github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx wxt prepare
+      - run: npm run zip:firefox
+      - name: Submit to Firefox Add-ons
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          mapfile -t FX < <(ls dist/*-firefox.zip)
+          mapfile -t SRC < <(ls dist/*-sources.zip)
+          { [ "${#FX[@]}" -eq 1 ] && [ "${#SRC[@]}" -eq 1 ]; } || { echo "need 1 fx + 1 sources; fx=${FX[*]} src=${SRC[*]}" >&2; exit 1; }
+          echo "ref=${{ inputs.ref }} fx=${FX[0]} src=${SRC[0]} dry_run=${{ inputs.dry_run }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npx wxt submit --dry-run --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"
+          else
+            npx wxt submit --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"
+          fi
