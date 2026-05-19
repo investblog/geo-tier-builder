@@ -1,22 +1,10 @@
 name: Submit to stores
 
-# Chrome + Edge:
-#   - push a v* tag  -> submitted AUTOMATICALLY (real, parallel to
-#     release.yml). Neither store burns version numbers.
-#   - manual run      -> when "stores" includes it; honors dry_run.
-#
-# Firefox:
-#   - MANUAL ONLY (never on tag push) — AMO burns version numbers forever,
-#     so it stays a deliberate, human-triggered step. Submits build +
-#     sources zip (AMO requires source for built extensions).
-#
-# Credentials are GitHub repo secrets (Settings -> Secrets and variables ->
-# Actions), never in the repo:
-#   CHROME_EXTENSION_ID, CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
-#   FIREFOX_EXTENSION_ID, FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET
-#   EDGE_PRODUCT_ID, EDGE_CLIENT_ID, EDGE_API_KEY   (Edge API v1.1)
-# Chrome also needs the Chrome Web Store API enabled in the OAuth client's
-# GCP project (else a valid token 403s with SERVICE_DISABLED).
+# Thin caller of the shared reusable workflow (also lives in this repo).
+# Chrome + Edge auto-submit on a v* tag; Firefox is manual-only (the
+# reusable workflow centrally gates Firefox to workflow_dispatch since
+# AMO burns version numbers). Manual run lets you pick stores + dry_run.
+# Secrets (CHROME_*/FIREFOX_*/EDGE_*) are this repo's GitHub secrets.
 
 on:
   push:
@@ -41,107 +29,17 @@ on:
         type: boolean
         default: true
 
-# One submission per ref at a time; never cancel an in-flight upload.
 concurrency:
   group: submit-${{ github.ref }}
   cancel-in-progress: false
 
-permissions:
-  contents: read
-
 jobs:
-  submit-chrome:
-    # Auto on tag push; on manual run when chrome/all is chosen.
-    if: ${{ github.event_name == 'push' || inputs.stores == 'chrome' || inputs.stores == 'all' }}
-    runs-on: ubuntu-latest
-    env:
-      REF: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
-      DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ env.REF }}
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx wxt prepare
-      - name: Build Chrome zip
-        run: npm run zip
-      - name: Submit to Chrome Web Store
-        env:
-          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: |
-          set -euo pipefail
-          mapfile -t Z < <(ls dist/*-chrome.zip)
-          [ "${#Z[@]}" -eq 1 ] || { echo "expected 1 chrome zip, got ${#Z[@]}: ${Z[*]}" >&2; exit 1; }
-          echo "Ref: $REF | zip: ${Z[0]} | dry_run: $DRY"
-          if [ "$DRY" = "true" ]; then npx wxt submit --dry-run --chrome-zip "${Z[0]}"; else npx wxt submit --chrome-zip "${Z[0]}"; fi
-
-  submit-edge:
-    # Auto on tag push; on manual run when edge/all is chosen. Edge does
-    # not burn versions, so auto-on-tag is safe.
-    if: ${{ github.event_name == 'push' || inputs.stores == 'edge' || inputs.stores == 'all' }}
-    runs-on: ubuntu-latest
-    env:
-      REF: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
-      DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ env.REF }}
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx wxt prepare
-      - name: Build Edge zip
-        run: npm run zip:edge
-      - name: Submit to Edge Add-ons
-        env:
-          EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
-          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
-          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
-        run: |
-          set -euo pipefail
-          mapfile -t Z < <(ls dist/*-edge.zip)
-          [ "${#Z[@]}" -eq 1 ] || { echo "expected 1 edge zip, got ${#Z[@]}: ${Z[*]}" >&2; exit 1; }
-          echo "Ref: $REF | zip: ${Z[0]} | dry_run: $DRY"
-          if [ "$DRY" = "true" ]; then npx wxt submit --dry-run --edge-zip "${Z[0]}"; else npx wxt submit --edge-zip "${Z[0]}"; fi
-
-  submit-firefox:
-    # Manual only. AMO burns versions -> never auto on tag.
-    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.stores == 'firefox' || inputs.stores == 'all') }}
-    runs-on: ubuntu-latest
-    env:
-      REF: ${{ inputs.tag }}
-      DRY: ${{ inputs.dry_run }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ env.REF }}
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx wxt prepare
-      - name: Build Firefox zip + sources zip
-        run: npm run zip:firefox
-      - name: Submit to Firefox Add-ons
-        env:
-          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
-          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
-          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: |
-          set -euo pipefail
-          mapfile -t FX < <(ls dist/*-firefox.zip)
-          mapfile -t SRC < <(ls dist/*-sources.zip)
-          { [ "${#FX[@]}" -eq 1 ] && [ "${#SRC[@]}" -eq 1 ]; } || { echo "need 1 fx + 1 sources; got fx=${FX[*]} src=${SRC[*]}" >&2; exit 1; }
-          echo "Ref: $REF | fx: ${FX[0]} | sources: ${SRC[0]} | dry_run: $DRY"
-          if [ "$DRY" = "true" ]; then npx wxt submit --dry-run --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"; else npx wxt submit --firefox-zip "${FX[0]}" --firefox-sources-zip "${SRC[0]}"; fi
+  submit:
+    uses: investblog/geo-tier-builder/.github/workflows/store-submit.yml@main
+    secrets: inherit
+    with:
+      ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+      chrome: ${{ github.event_name == 'push' || inputs.stores == 'chrome' || inputs.stores == 'all' }}
+      firefox: ${{ inputs.stores == 'firefox' || inputs.stores == 'all' }}
+      edge: ${{ github.event_name == 'push' || inputs.stores == 'edge' || inputs.stores == 'all' }}
