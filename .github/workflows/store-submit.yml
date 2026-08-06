@@ -13,6 +13,12 @@ name: store-submit (reusable)
 #
 # Firefox is gated to workflow_dispatch only (AMO burns version numbers
 # forever) — this safety rule is centralized here, not per caller.
+#
+# Read that gate precisely: it stops a TAG PUSH from reaching AMO, and nothing
+# else. A dispatch that selects firefox — including `stores=all`, and including
+# the dispatch Cut release makes on your behalf — does submit Firefox, which is
+# the intended way to ship all three at once. Confirmed by a dry run on
+# 2026-08-06, not inferred: with stores=all the firefox job ran.
 
 on:
   workflow_call:
