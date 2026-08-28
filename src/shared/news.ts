@@ -21,7 +21,12 @@ export const MAX_NOTIFICATIONS_PER_CHECK = 3;
 export const MAX_SEEN_SLUGS = 300;
 export const MAX_NOTIF_URL_ENTRIES = 20;
 
-const NEWS_PERMISSIONS = { permissions: ['notifications', 'alarms'], origins: [NEWS_ORIGIN] };
+// Firefox rejects 'alarms' as an optional permission (it is required there, see
+// wxt.config.ts), so only Chromium requests/drops it at runtime.
+const NEWS_PERMISSIONS = {
+  permissions: import.meta.env.BROWSER === 'firefox' ? ['notifications'] : ['notifications', 'alarms'],
+  origins: [NEWS_ORIGIN],
+};
 
 export async function getNewsEnabled(): Promise<boolean> {
   try {
