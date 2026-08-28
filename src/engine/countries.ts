@@ -67,3 +67,15 @@ export function getCountryByIso3(iso3: string): Country | undefined {
 export function findByAlias(text: string): Country | undefined {
   return aliasIndex.get(text.toLowerCase());
 }
+
+/** True when the query matches the country's codes, names, or aliases (case-insensitive substring). */
+export function matchesQuery(c: Country, query: string): boolean {
+  const q = query.toLowerCase();
+  return (
+    c.iso2.toLowerCase().includes(q) ||
+    c.iso3.toLowerCase().includes(q) ||
+    c.name_en.toLowerCase().includes(q) ||
+    c.name_ru.toLowerCase().includes(q) ||
+    c.aliases.some((a) => a.toLowerCase().includes(q))
+  );
+}

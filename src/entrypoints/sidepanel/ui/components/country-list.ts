@@ -1,4 +1,4 @@
-import { ALL_COUNTRIES, BY_TAG } from '@engine/countries';
+import { ALL_COUNTRIES, BY_TAG, matchesQuery } from '@engine/countries';
 import { REGIONS } from '@engine/regions';
 import { toggle, toggleFavorite } from '@engine/selection';
 import type { Store } from '@engine/store';
@@ -28,15 +28,7 @@ function filterCountries(filters: ToolbarState, store: Store): Country[] {
 
   // Search filter
   if (filters.search) {
-    const q = filters.search.toLowerCase();
-    list = list.filter(
-      (c) =>
-        c.iso2.toLowerCase().includes(q) ||
-        c.iso3.toLowerCase().includes(q) ||
-        c.name_en.toLowerCase().includes(q) ||
-        c.name_ru.toLowerCase().includes(q) ||
-        c.aliases.some((a) => a.toLowerCase().includes(q)),
-    );
+    list = list.filter((c) => matchesQuery(c, filters.search));
   }
 
   // Region filter

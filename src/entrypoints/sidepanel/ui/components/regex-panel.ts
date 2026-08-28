@@ -1,4 +1,5 @@
 import { type AnchorMode, buildCatchAll, buildPathRegex, parseSlugs, testPathname } from '@engine/tds-regex';
+import { createSvgIcon } from '@shared/dom';
 import { t } from '@shared/i18n';
 import { showToast } from './toast';
 
@@ -102,6 +103,10 @@ export function createRegexPanel(container: HTMLElement): { destroy(): void } {
   // ── Info card (TDS contract + tracked docs link) ──
   const infoCard = document.createElement('div');
   infoCard.className = 'regex-card';
+  // Same chevrons as the tab icon — the card's decorative glyph.
+  infoCard.appendChild(
+    createSvgIcon('M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6z', 'regex-card__glyph'),
+  );
 
   const infoText = document.createElement('p');
   infoText.className = 'regex-card__text';

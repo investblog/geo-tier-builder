@@ -522,38 +522,47 @@ html, body {
   color: var(--warning);
 }
 
-/* Info card — adapted from 301-ui .card--accent-info (left accent bar). */
-.regex-card {
+/* Info card — 301.sh card language: no accent bar, a faint decorative glyph
+   fills the right side instead. Purely ornamental (aria-hidden). */
+.regex-card,
+.serp-card {
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  margin-top: var(--space-2);
   padding: var(--space-3);
-  padding-left: calc(var(--space-3) + 4px);
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-sm);
 }
 
-.regex-card::before {
-  content: '';
+.regex-card__glyph,
+.serp-card__glyph {
   position: absolute;
-  inset: 0;
-  border-left: 4px solid var(--info);
-  border-radius: inherit;
+  top: 50%;
+  right: var(--space-3);
+  width: 5.5rem;
+  height: 5.5rem;
+  transform: translateY(-50%);
+  color: var(--text-main);
+  opacity: var(--glyph-opacity);
+  filter: blur(1px);
   pointer-events: none;
 }
 
-.regex-card__text {
+.regex-card__text,
+.serp-card__text {
   margin: 0;
   font-size: var(--fs-xs);
   line-height: 1.5;
   color: var(--text-subtle);
 }
 
-.regex-card__link {
+.regex-card__link,
+.serp-card__link {
   align-self: flex-start;
   font-size: var(--fs-xs);
   font-weight: 600;
@@ -562,7 +571,9 @@ html, body {
 }
 
 .regex-card__link:hover,
-.regex-card__link:focus-visible {
+.regex-card__link:focus-visible,
+.serp-card__link:hover,
+.serp-card__link:focus-visible {
   text-decoration: underline;
 }
 
@@ -605,6 +616,34 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ── SERP preview ── */
+.serp-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  overflow-y: auto;
+}
+
+.serp-panel__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.serp-panel__flag-wrap {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.serp-panel__flag {
+  width: 20px;
+  height: 15px;
+  border-radius: 2px;
+  overflow: hidden;
 }
 
 /* ── Tier overrides form (in Settings) ── */

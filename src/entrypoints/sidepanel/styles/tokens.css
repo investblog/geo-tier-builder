@@ -116,6 +116,8 @@
   --chip-text-active: var(--primary-text);
   --chip-border-active: var(--primary);
 
+  --glyph-opacity: 0.05;
+
   color-scheme: dark;
 }
 
@@ -161,6 +163,8 @@
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.12);
+
+  --glyph-opacity: 0.035;
 
   color-scheme: light;
 }

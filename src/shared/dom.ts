@@ -15,6 +15,19 @@ export function createFlagIcon(iso2: string, className = 'country-row__flag'): S
   return svg;
 }
 
+/** Build a single-path SVG icon (decorative — aria-hidden). */
+export function createSvgIcon(path: string, className: string, viewBox = '0 0 24 24'): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', className);
+  svg.setAttribute('viewBox', viewBox);
+  svg.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS(SVG_NS, 'path');
+  p.setAttribute('fill', 'currentColor');
+  p.setAttribute('d', path);
+  svg.appendChild(p);
+  return svg;
+}
+
 /**
  * Parse a trusted, hard-coded HTML string into a DocumentFragment via DOMParser
  * (no innerHTML — AMO compliance). Only ever called with static markup defined

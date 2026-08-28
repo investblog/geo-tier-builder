@@ -54,13 +54,22 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
-    version: '0.3.0',
+    version: '0.4.0',
     author: '301.st — Smart Traffic <support@301.st>',
     homepage_url: 'https://301.st',
 
     ...(browser === 'chrome' && { minimum_chrome_version: '116' }),
 
     permissions: browser === 'firefox' ? ['storage'] : ['storage', 'sidePanel'],
+
+    // Publisher-news opt-in — optional so the required set above never changes.
+    // Firefox MV2 has no optional_host_permissions; origins fold into optional_permissions.
+    ...(browser === 'firefox'
+      ? { optional_permissions: ['notifications', 'alarms', 'https://301.sh/*'] }
+      : {
+          optional_permissions: ['notifications', 'alarms'],
+          optional_host_permissions: ['https://301.sh/*'],
+        }),
 
     icons: {
       16: 'icons/16.png',

@@ -6,6 +6,7 @@ import { createImportPanel } from './ui/components/import-panel';
 import { createOutputPanel } from './ui/components/output-panel';
 import { createPresetsPanel } from './ui/components/presets-panel';
 import { createRegexPanel } from './ui/components/regex-panel';
+import { createSerpPanel } from './ui/components/serp-panel';
 import { createSettingsPanel } from './ui/components/settings-panel';
 import { createToolbar } from './ui/components/toolbar';
 
@@ -74,6 +75,10 @@ async function init(): Promise<void> {
   // TDS regex helper tab
   const regexPanelEl = document.getElementById('regex-panel')!;
   createRegexPanel(regexPanelEl);
+
+  // SERP geo-preview tab
+  const serpPanelEl = document.getElementById('serp-panel')!;
+  createSerpPanel(serpPanelEl);
 
   // Import panel
   const importPanelEl = document.getElementById('import-panel')!;
