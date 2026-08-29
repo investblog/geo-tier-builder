@@ -2,7 +2,31 @@ import { browser } from 'wxt/browser';
 import { defineBackground } from 'wxt/sandbox';
 import { setupNews } from '@/background/news';
 
+const WELCOME_SEEN_KEY = 'geoTierBuilder:welcomeSeen';
+
+/**
+ * Show the welcome tab once per profile. Keyed on a storage flag rather than
+ * `reason === 'install'` alone: reloading a temporary add-on (and some
+ * reinstall paths) reports `update`, which would silently skip the page.
+ */
+async function openWelcomeOnce(reason: string): Promise<void> {
+  try {
+    const stored = await browser.storage.local.get(WELCOME_SEEN_KEY);
+    if (stored[WELCOME_SEEN_KEY]) return;
+    if (reason !== 'install' && reason !== 'update') return;
+    await browser.storage.local.set({ [WELCOME_SEEN_KEY]: true });
+    await browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
+  } catch (e) {
+    console.warn('welcome page failed to open', e);
+  }
+}
+
 export default defineBackground(() => {
+  // Registered FIRST: a throw anywhere below must not cost the welcome page.
+  browser.runtime.onInstalled.addListener(({ reason }) => {
+    void openWelcomeOnce(reason);
+  });
+
   setupNews();
 
   // Toolbar button: Chromium opens the side panel; Firefox opens the sidebar
@@ -15,11 +39,4 @@ export default defineBackground(() => {
       b.sidebarAction.open().catch(() => {});
     });
   }
-
-  // First install only (never on updates): open the welcome page.
-  browser.runtime.onInstalled.addListener(({ reason }) => {
-    if (reason === 'install') {
-      void browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
-    }
-  });
 });
