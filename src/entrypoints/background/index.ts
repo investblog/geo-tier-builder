@@ -5,11 +5,14 @@ import { setupNews } from '@/background/news';
 export default defineBackground(() => {
   setupNews();
 
-  // Chrome: open side panel on action click
+  // Toolbar button: Chromium opens the side panel; Firefox opens the sidebar
+  // directly from the click gesture (sidebarAction.open requires a user action).
+  // setPanelBehavior runs on every worker start, not only on install.
   const b = browser as any;
-  if (b.sidePanel) {
-    browser.runtime.onInstalled.addListener(() => {
-      b.sidePanel.setPanelBehavior?.({ openPanelOnActionClick: true });
+  b.sidePanel?.setPanelBehavior?.({ openPanelOnActionClick: true })?.catch?.(() => {});
+  if (b.sidebarAction && b.browserAction) {
+    b.browserAction.onClicked.addListener(() => {
+      b.sidebarAction.open().catch(() => {});
     });
   }
 

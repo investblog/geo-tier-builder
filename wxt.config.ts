@@ -60,6 +60,25 @@ export default defineConfig({
 
     ...(browser === 'chrome' && { minimum_chrome_version: '116' }),
 
+    // Toolbar button without a popup: Chromium opens the side panel via
+    // setPanelBehavior (background), Firefox opens the sidebar from the
+    // browserAction.onClicked handler. No intermediate popup window.
+    ...(browser === 'firefox'
+      ? {
+          browser_action: {
+            default_title: 'Geo Tier Builder',
+            default_icon: { 16: 'icons/16.png', 32: 'icons/32.png' },
+          },
+          // Firefox: a bindable "toggle the sidebar" command (the toolbar button does the same).
+          commands: { _execute_sidebar_action: { description: 'Toggle the Geo Tier Builder sidebar' } },
+        }
+      : {
+          action: {
+            default_title: 'Geo Tier Builder',
+            default_icon: { 16: 'icons/16.png', 32: 'icons/32.png' },
+          },
+        }),
+
     // Firefox disallows 'alarms' in optional_permissions (AMO MANIFEST_OPTIONAL_PERMISSIONS
     // warning, and permissions.request would reject it) — it is a silent no-prompt
     // permission there, so it rides in the required set on Firefox only.
